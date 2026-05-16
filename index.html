@@ -425,7 +425,7 @@ async function loadSheetData(){
     setSync(false,'Conectando...');
     // Try both possible sheet names (with/without accent)
     let rows = [];
-    const sheetNames = ['Respuestas', 'Sheet1', 'Hoja1', 'RESPUESTAS'];
+    const sheetNames = ['Respuestas de formulario 1', 'Respuestas', 'Sheet1', 'Hoja1', 'RESPUESTAS'];
     let connected = false;
     for(const name of sheetNames){
       try{
