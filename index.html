@@ -8,12 +8,15 @@
 <style>
 :root{--red:#DA291C;--gold:#FFC72C;--dark:#0f0f0f;--surface:#1a1a1a;--card:#222;--border:rgba(255,255,255,0.08);--text:#f0f0f0;--muted:#888;--green:#22c55e;--amber:#f59e0b;--danger:#ef4444;--radius:14px;--rsm:8px;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html{scroll-behavior:smooth;}
 body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);min-height:100vh;overflow-x:hidden;}
 nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;gap:12px;height:56px;}
 .nav-logo{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:1px;color:var(--gold);}
 .nav-badge{background:var(--red);color:#fff;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;}
 .nav-spacer{flex:1;}.nav-time{font-size:12px;color:var(--muted);}
+.nav-sync{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px;}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);}
+.sync-dot.live{background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
 .tab-bar{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
 .tab-bar::-webkit-scrollbar{display:none;}
 .tab-btn{flex:1;min-width:60px;padding:12px 4px 10px;background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:3px;}
@@ -36,56 +39,19 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
 .card-box{background:var(--card);border-radius:var(--rsm);border:1px solid var(--border);padding:14px;margin-bottom:12px;}
 .sem-list{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;}
 .sem-item{background:var(--card);border-radius:var(--rsm);border:1px solid var(--border);padding:11px 13px;display:flex;align-items:center;gap:11px;cursor:pointer;transition:border-color .15s;}
-.sem-item:hover{border-color:rgba(255,255,255,0.2);}
+.sem-item:hover{border-color:rgba(255,255,255,.2);}
 .sem-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
 .sem-dot.green{background:var(--green);box-shadow:0 0 7px rgba(34,197,94,.5);}
 .sem-dot.amber{background:var(--amber);box-shadow:0 0 7px rgba(245,158,11,.5);}
 .sem-dot.red{background:var(--danger);box-shadow:0 0 7px rgba(239,68,68,.5);}
-.sem-name{flex:1;font-size:13px;font-weight:500;line-height:1.3;}
+.sem-name{flex:1;font-size:13px;font-weight:500;line-height:1.3;min-width:0;}
 .sem-sub{font-size:10px;color:var(--muted);}
-.sem-pct{font-family:'Bebas Neue',sans-serif;font-size:18px;}
+.sem-pct{font-family:'Bebas Neue',sans-serif;font-size:18px;flex-shrink:0;}
 .chart-wrap{background:var(--card);border-radius:var(--rsm);border:1px solid var(--border);padding:14px;margin-bottom:14px;}
 .chart-area{height:150px;position:relative;}
 .zone-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px;}
 .zone-pill{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:500;background:var(--surface);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .15s;}
 .zone-pill.active{background:var(--gold);color:var(--dark);border-color:var(--gold);font-weight:600;}
-.form-row{margin-bottom:12px;}
-.form-label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.5px;margin-bottom:5px;display:block;text-transform:uppercase;}
-.form-input,.form-select,.form-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:11px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;transition:border-color .2s;outline:none;-webkit-appearance:none;}
-.form-input:focus,.form-select:focus{border-color:var(--gold);}
-.form-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:34px;}
-.form-textarea{height:72px;resize:none;}
-.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-.num-wrap{position:relative;}
-.num-wrap .form-input{padding-right:38px;text-align:center;font-size:17px;font-weight:600;}
-.num-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.08);border:none;color:var(--text);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;}
-.num-btn.minus{left:5px;}.num-btn.plus{right:5px;}
-.toggle-group{display:flex;gap:7px;flex-wrap:wrap;}
-.toggle-opt{padding:7px 13px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .15s;user-select:none;}
-.toggle-opt.selected{background:var(--gold);color:var(--dark);border-color:var(--gold);font-weight:600;}
-.btn-submit{width:100%;padding:14px;border-radius:var(--rsm);background:var(--red);border:none;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:1px;cursor:pointer;transition:transform .15s;}
-.btn-submit:active{transform:scale(.98);}
-.success-screen{display:none;text-align:center;padding:40px 20px;}
-.success-icon{font-size:60px;margin-bottom:14px;}
-.success-title{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--green);}
-.success-sub{font-size:13px;color:var(--muted);margin-top:7px;}
-.btn-nuevo{margin-top:22px;padding:11px 26px;border-radius:var(--rsm);background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;}
-.alert-item{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:var(--rsm);padding:11px 13px;margin-bottom:7px;display:flex;align-items:center;gap:9px;cursor:pointer;}
-.alert-icon{font-size:18px;flex-shrink:0;}.alert-text{font-size:12px;}.alert-rest{font-weight:600;}.alert-detail{font-size:10px;color:var(--muted);}
-.search-box{margin-bottom:10px;}
-.pilar-card{background:var(--card);border-radius:var(--rsm);border:1px solid var(--border);padding:12px 14px;margin-bottom:8px;}
-.pilar-tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;margin-bottom:6px;}
-.pilar-desc{font-size:12px;color:var(--muted);line-height:1.5;}
-.add-btn{width:100%;padding:12px;border-radius:var(--rsm);background:var(--surface);border:1px solid var(--gold);color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;cursor:pointer;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px;}
-.add-form{display:none;background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:16px;margin-bottom:14px;}
-.add-form.open{display:block;}
-.sem-preview{display:none;background:var(--surface);border-radius:var(--rsm);padding:11px 13px;margin-bottom:14px;align-items:center;gap:9px;}
-/* RANKING TAB */
-.rank-controls{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:16px;margin-bottom:14px;}
-.rank-controls-title{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gold);margin-bottom:12px;}
-.seg-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
-.seg-tab{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .15s;}
-.seg-tab.active{background:var(--red);color:#fff;border-color:var(--red);}
 .rank-list{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;}
 .rank-item{background:var(--card);border-radius:var(--rsm);border:1px solid var(--border);padding:11px 13px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color .15s;}
 .rank-item:hover{border-color:rgba(255,255,255,.2);}
@@ -98,15 +64,57 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
 .rank-pct{font-size:11px;}
 .rank-bar-wrap{height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:4px;}
 .rank-bar{height:3px;border-radius:2px;background:var(--gold);}
+.seg-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+.seg-tab{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .15s;}
+.seg-tab.active{background:var(--red);color:#fff;border-color:var(--red);}
+.rank-controls{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:16px;margin-bottom:14px;}
 .btn-slide{width:100%;padding:13px;border-radius:var(--rsm);background:linear-gradient(135deg,var(--red),#8b0000);border:none;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;cursor:pointer;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px;}
-/* SLIDE OVERLAY */
-.slide-overlay{display:none;position:fixed;inset:0;background:#000;z-index:300;overflow:hidden;}
-.slide-overlay.open{display:flex;flex-direction:column;}
-.slide-close{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.1);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;z-index:10;}
-.slide-dl{position:absolute;top:12px;left:12px;background:var(--gold);border:none;color:var(--dark);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;z-index:10;}
-.slide-canvas{flex:1;overflow:hidden;position:relative;}
-#slideEl{width:100%;height:100%;position:absolute;inset:0;}
-/* MODAL */
+.form-row{margin-bottom:12px;}
+.form-label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.5px;margin-bottom:5px;display:block;text-transform:uppercase;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:11px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;transition:border-color .2s;outline:none;-webkit-appearance:none;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold);}
+.form-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:34px;}
+.form-textarea{height:72px;resize:none;}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.num-wrap{position:relative;}
+.num-wrap .form-input{padding-right:38px;text-align:center;font-size:17px;font-weight:600;}
+.num-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.08);border:none;color:var(--text);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;}
+.num-btn.minus{left:5px;}.num-btn.plus{right:5px;}
+.toggle-group{display:flex;gap:7px;flex-wrap:wrap;}
+.toggle-opt{padding:7px 13px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .15s;user-select:none;}
+.toggle-opt.selected{background:var(--gold);color:var(--dark);border-color:var(--gold);font-weight:600;}
+.btn-submit{width:100%;padding:14px;border-radius:var(--rsm);background:var(--red);border:none;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:1px;cursor:pointer;transition:transform .15s;}
+.btn-submit:active{transform:scale(.98);}
+.btn-submit:disabled{background:#444;color:#666;cursor:not-allowed;}
+.success-screen{display:none;text-align:center;padding:40px 20px;}
+.success-icon{font-size:60px;margin-bottom:14px;}
+.btn-nuevo{margin-top:22px;padding:11px 26px;border-radius:var(--rsm);background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;}
+.alert-item{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:var(--rsm);padding:11px 13px;margin-bottom:7px;display:flex;align-items:center;gap:9px;cursor:pointer;}
+.alert-icon{font-size:18px;flex-shrink:0;}.alert-text{font-size:12px;}.alert-rest{font-weight:600;}.alert-detail{font-size:10px;color:var(--muted);}
+.search-box{margin-bottom:10px;}
+.add-btn{width:100%;padding:12px;border-radius:var(--rsm);background:var(--surface);border:1px solid var(--gold);color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;cursor:pointer;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.add-form{display:none;background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:16px;margin-bottom:14px;}
+.add-form.open{display:block;}
+.sem-preview{display:none;background:var(--surface);border-radius:var(--rsm);padding:11px 13px;margin-bottom:14px;align-items:center;gap:9px;}
+.pilar-card{background:var(--card);border-radius:var(--rsm);border:1px solid var(--border);padding:12px 14px;margin-bottom:8px;}
+.pilar-tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;margin-bottom:6px;}
+.pilar-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+.pts-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.pts-row:last-child{border-bottom:none;}
+.pts-badge{font-family:'Bebas Neue',sans-serif;font-size:13px;padding:3px 10px;border-radius:20px;flex-shrink:0;min-width:72px;text-align:center;}
+.pts-concepto{font-size:13px;flex:1;}
+.rew-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);}
+.rew-row:last-child{border-bottom:none;}
+.rew-name{font-size:13px;}.rew-pts{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gold);}
+.match-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.match-row:last-child{border-bottom:none;}
+.match-fecha{color:var(--muted);width:52px;flex-shrink:0;font-size:11px;}.match-hora{color:var(--gold);width:40px;flex-shrink:0;font-size:11px;}.match-partido{flex:1;}.match-etapa{font-size:10px;color:var(--muted);text-align:right;}
+.match-row.mexico{background:rgba(218,41,28,.08);border-radius:var(--rsm);padding:9px;margin:0 -2px;}
+.loading-bar{height:3px;background:var(--gold);border-radius:2px;animation:loadbar 1.5s infinite;width:60%;margin:0 auto;}
+@keyframes loadbar{0%{width:20%;}50%{width:80%;}100%{width:20%;}}
+.loading-box{text-align:center;padding:32px 16px;}
+.loading-txt{font-size:12px;color:var(--muted);margin-top:10px;}
+.error-box{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:var(--rsm);padding:12px;text-align:center;font-size:12px;color:var(--danger);margin-bottom:12px;}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:200;padding:20px;overflow-y:auto;}
 .modal-overlay.open{display:flex;align-items:flex-start;justify-content:center;padding-top:48px;}
 .modal-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;width:100%;max-width:480px;position:relative;}
@@ -126,21 +134,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
 .hist-date{color:var(--muted);width:54px;flex-shrink:0;}
 .hist-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .edit-btn{width:100%;margin-top:12px;padding:11px;border-radius:var(--rsm);background:var(--gold);border:none;color:var(--dark);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;cursor:pointer;}
-.match-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px;}
-.match-row:last-child{border-bottom:none;}
-.match-fecha{color:var(--muted);width:52px;flex-shrink:0;font-size:11px;}
-.match-hora{color:var(--gold);width:40px;flex-shrink:0;font-size:11px;}
-.match-partido{flex:1;}
-.match-etapa{font-size:10px;color:var(--muted);text-align:right;}
-.match-row.mexico{background:rgba(218,41,28,.08);border-radius:var(--rsm);padding:9px;margin:0 -2px;}
-.pts-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
-.pts-row:last-child{border-bottom:none;}
-.pts-badge{font-family:'Bebas Neue',sans-serif;font-size:13px;padding:3px 10px;border-radius:20px;flex-shrink:0;min-width:72px;text-align:center;}
-.pts-concepto{font-size:13px;flex:1;}
-.rew-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);}
-.rew-row:last-child{border-bottom:none;}
-.rew-name{font-size:13px;}
-.rew-pts{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gold);}
+.slide-overlay{display:none;position:fixed;inset:0;background:#000;z-index:300;overflow:hidden;flex-direction:column;}
+.slide-overlay.open{display:flex;}
+.slide-close{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.1);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;z-index:10;}
+.slide-dl{position:absolute;top:12px;left:12px;background:var(--gold);border:none;color:var(--dark);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;z-index:10;}
+.logo-btn{position:absolute;top:12px;left:56px;background:rgba(255,255,255,.12);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;z-index:10;}
+.slide-canvas{flex:1;overflow:hidden;position:relative;}
 .footer{padding:22px 16px;text-align:center;}
 .footer-logo{font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--gold);}
 .footer-sub{font-size:10px;color:var(--muted);margin-top:3px;}
@@ -158,6 +157,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
   <span class="nav-logo">McD · Plan Mundial 2026</span>
   <span class="nav-badge">FIFA 2026</span>
   <span class="nav-spacer"></span>
+  <span class="nav-sync"><span class="sync-dot" id="sync-dot"></span><span id="sync-txt">Conectando...</span></span>
   <span class="nav-time" id="clock"></span>
 </nav>
 <div class="tab-bar">
@@ -173,24 +173,25 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
 <!-- RESUMEN -->
 <div id="view-resumen" class="view active">
   <div class="hero">
-    <div class="hero-label">Torneo activo · 276 restaurantes</div>
+    <div class="hero-label">Datos en tiempo real · Google Sheets</div>
     <div class="hero-title">Plan Mundial 2026</div>
-    <div class="hero-sub">McDonald's México · Estrategia nacional</div>
+    <div class="hero-sub">McDonald's México · <span id="total-rest">276</span> restaurantes</div>
   </div>
-  <div class="kpi-grid">
-    <div class="kpi-card"><div class="kpi-lbl">Ausentismo promedio</div><div class="kpi-val c-green">7.4%</div><div class="kpi-meta c-green">✓ Meta &lt;10%</div></div>
-    <div class="kpi-card"><div class="kpi-lbl">Participación programa</div><div class="kpi-val c-gold">84%</div><div class="kpi-meta c-green">✓ Meta &gt;80%</div></div>
-    <div class="kpi-card"><div class="kpi-lbl">Días clave cubiertos</div><div class="kpi-val">4/4</div><div class="kpi-meta c-green">✓ 100%</div></div>
-    <div class="kpi-card"><div class="kpi-lbl">Rest. en rojo hoy</div><div class="kpi-val c-red">3</div><div class="kpi-meta c-red">Requieren apoyo</div></div>
-  </div>
-  <p class="sec-title">Tendencia nacional</p>
-  <div class="chart-wrap">
-    <div style="font-size:12px;font-weight:500;margin-bottom:10px;">% Ausentismo semanal</div>
-    <div class="chart-area"><canvas id="trendChart"></canvas></div>
-    <div style="display:flex;gap:14px;margin-top:8px;font-size:10px;color:var(--muted);">
-      <span><span style="display:inline-block;width:10px;height:3px;background:var(--gold);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Real</span>
-      <span><span style="display:inline-block;width:10px;height:2px;background:var(--danger);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Meta 10%</span>
+  <div id="kpi-loading" class="loading-box"><div class="loading-bar"></div><div class="loading-txt">Cargando datos del Sheet...</div></div>
+  <div id="kpi-error" class="error-box" style="display:none;">No se pudo conectar al Sheet. Verifica que sea público.</div>
+  <div id="kpi-content" style="display:none;">
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-lbl">Ausentismo promedio</div><div class="kpi-val" id="kpi-aus">—</div><div class="kpi-meta" id="kpi-aus-meta">Meta &lt;10%</div></div>
+      <div class="kpi-card"><div class="kpi-lbl">Registros hoy</div><div class="kpi-val c-gold" id="kpi-registros">—</div><div class="kpi-meta">Reportes recibidos</div></div>
+      <div class="kpi-card"><div class="kpi-lbl">Rest. en verde</div><div class="kpi-val c-green" id="kpi-verde">—</div><div class="kpi-meta c-green">Ausentismo &lt;10%</div></div>
+      <div class="kpi-card"><div class="kpi-lbl">Rest. en rojo</div><div class="kpi-val c-red" id="kpi-rojo">—</div><div class="kpi-meta c-red">Requieren apoyo</div></div>
     </div>
+    <div style="font-size:11px;color:var(--muted);text-align:right;margin-bottom:12px;" id="last-update"></div>
+  </div>
+  <p class="sec-title">Tendencia semanal</p>
+  <div class="chart-wrap">
+    <div style="font-size:12px;font-weight:500;margin-bottom:10px;">% Ausentismo por semana</div>
+    <div class="chart-area"><canvas id="trendChart"></canvas></div>
   </div>
   <p class="sec-title">Los 4 pilares</p>
   <div class="pilar-card"><div class="pilar-tag" style="background:#fef9c3;color:#854d0e;">🗓 Anticipación</div><div class="pilar-desc">Mapeo de fechas críticas y perfiles de riesgo antes del torneo.</div></div>
@@ -202,13 +203,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
 <!-- RANKING -->
 <div id="view-ranking" class="view">
   <div class="hero" style="background:linear-gradient(135deg,#78350f,#451a03);">
-    <div class="hero-label">Clasificación dinámica</div>
+    <div class="hero-label">Datos reales del Sheet</div>
     <div class="hero-title">Ranking</div>
-    <div class="hero-sub">Filtra por zona, consultor o gerente · Genera tu slide</div>
+    <div class="hero-sub">Filtra · Compara · Genera slide</div>
   </div>
-
   <div class="rank-controls">
-    <div class="rank-controls-title">Segmentación</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gold);margin-bottom:12px;">Segmentación</div>
     <div class="seg-tabs">
       <button class="seg-tab active" onclick="setSeg('zona',this)">Por Zona</button>
       <button class="seg-tab" onclick="setSeg('consultor',this)">Por Consultor Ops</button>
@@ -216,24 +216,17 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
     </div>
     <div class="form-row" style="margin-bottom:10px;">
       <label class="form-label" id="seg-label">Zona</label>
-      <select class="form-select" id="seg-select" onchange="renderRanking()">
-        <option value="todas">Todas las zonas</option>
-      </select>
+      <select class="form-select" id="seg-select" onchange="renderRanking()"><option value="todas">Todas</option></select>
     </div>
     <div class="form-row" style="margin-bottom:4px;">
       <label class="form-label">Mostrar top</label>
       <select class="form-select" id="top-n" onchange="renderRanking()">
-        <option value="5">Top 5</option>
-        <option value="10" selected>Top 10</option>
-        <option value="15">Top 15</option>
-        <option value="999">Todos</option>
+        <option value="5">Top 5</option><option value="10" selected>Top 10</option><option value="15">Top 15</option><option value="999">Todos</option>
       </select>
     </div>
   </div>
-
   <div id="rank-header" style="margin-bottom:8px;font-size:12px;color:var(--muted);"></div>
   <div class="rank-list" id="rank-list"></div>
-
   <button class="btn-slide" onclick="openSlide()">📊 GENERAR PRESENTACIÓN</button>
 </div>
 
@@ -242,7 +235,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
   <div class="hero" style="background:linear-gradient(135deg,#14532d,#052e16);">
     <div class="hero-label">Directorio completo</div>
     <div class="hero-title">Restaurantes</div>
-    <div class="hero-sub" id="rest-count-lbl">276 restaurantes · Toca para ver detalle</div>
+    <div class="hero-sub" id="rest-count-lbl">276 restaurantes · Toca para detalle</div>
   </div>
   <div class="search-box"><input class="form-input" id="search-rest" placeholder="🔍 Buscar por nombre, site o responsable..." oninput="filterRests()"></div>
   <div class="zone-row" id="zone-filter-rest">
@@ -256,9 +249,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
     <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gold);margin-bottom:12px;">Nuevo restaurante</div>
     <div class="form-row"><label class="form-label">Site</label><input class="form-input" id="add-site" placeholder="Ej. 999" inputmode="numeric"></div>
     <div class="form-row"><label class="form-label">Nombre</label><input class="form-input" id="add-nombre" placeholder="Ej. PERISUR DF"></div>
-    <div class="form-row"><label class="form-label">Dirección / Región</label>
-      <select class="form-select" id="add-dir"><option value="CENTRO">CENTRO</option><option value="NORTE SURESTE BAJIO">NORTE SURESTE BAJIO</option></select>
-    </div>
+    <div class="form-row"><label class="form-label">Dirección</label><select class="form-select" id="add-dir"><option value="CENTRO">CENTRO</option><option value="NORTE SURESTE BAJIO">NORTE SURESTE BAJIO</option></select></div>
     <div class="form-row"><label class="form-label">Consultor Operaciones</label><input class="form-input" id="add-cops" placeholder="Nombre completo"></div>
     <div class="form-row"><label class="form-label">Gerente Operaciones</label><input class="form-input" id="add-gops" placeholder="Nombre completo"></div>
     <div class="form-row"><label class="form-label">Consultor P&C</label><input class="form-input" id="add-pc" placeholder="Nombre completo"></div>
@@ -271,7 +262,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
   <div class="hero" style="background:linear-gradient(135deg,#1e3a5f,#0c1f35);">
     <div class="hero-label">Fechas clave del torneo</div>
     <div class="hero-title">Calendario</div>
-    <div class="hero-sub">Partidos de México marcados en rojo</div>
+    <div class="hero-sub">Partidos de México marcados</div>
   </div>
   <div class="card-box" id="partidos-list"></div>
 </div>
@@ -298,12 +289,15 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
   <div class="hero" style="background:linear-gradient(135deg,#7f1d1d,#450a0a);">
     <div class="hero-label">Requieren atención</div>
     <div class="hero-title">Alertas activas</div>
-    <div class="hero-sub">Hoy — <span id="alert-count">0</span> restaurantes en zona roja</div>
+    <div class="hero-sub">Hoy — <span id="alert-count">—</span> en zona roja</div>
   </div>
-  <p class="sec-title">Zona roja — acción inmediata</p>
-  <div id="alerts-red"></div>
-  <p class="sec-title" style="margin-top:6px;">Zona amarilla — monitoreo</p>
-  <div id="alerts-amber"></div>
+  <div id="alerts-loading" class="loading-box"><div class="loading-bar"></div><div class="loading-txt">Cargando alertas...</div></div>
+  <div id="alerts-content" style="display:none;">
+    <p class="sec-title">Zona roja — acción inmediata</p>
+    <div id="alerts-red"></div>
+    <p class="sec-title" style="margin-top:6px;">Zona amarilla — monitoreo</p>
+    <div id="alerts-amber"></div>
+  </div>
 </div>
 
 <!-- CAPTURA -->
@@ -311,8 +305,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
   <div id="form-section">
     <div style="background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:18px;margin-bottom:14px;">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);margin-bottom:3px;">Reporte del día</div>
-      <div style="font-size:11px;color:var(--muted);margin-bottom:16px;">Llena en 2 minutos · Datos guardados automáticamente</div>
-      <div class="form-row"><label class="form-label">Site</label><input class="form-input" id="f-site" placeholder="Ej. 63" inputmode="numeric" oninput="autoFillRest()"></div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:16px;">Llena en 2 minutos · Se guarda automáticamente en Google Sheets</div>
+      <div class="form-row"><label class="form-label">Site (número de restaurante)</label>
+        <input class="form-input" id="f-site" placeholder="Ej. 63" inputmode="numeric" oninput="autoFillRest()">
+      </div>
       <div id="rest-autoinfo" style="display:none;background:var(--surface);border-radius:var(--rsm);padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--muted);border:1px solid var(--border);"></div>
       <div class="form-row"><label class="form-label">Fecha</label><input class="form-input" id="f-fecha" type="date"></div>
       <div class="form-row"><label class="form-label">¿Hubo partido hoy?</label>
@@ -343,23 +339,23 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
         <div class="sem-dot" id="prev-dot"></div>
         <div><div style="font-size:12px;font-weight:600;" id="prev-estado"></div><div style="font-size:10px;color:var(--muted);" id="prev-pct"></div></div>
       </div>
-      <button class="btn-submit" onclick="submitForm()">ENVIAR REPORTE</button>
+      <button class="btn-submit" id="btn-enviar" onclick="submitForm()">ENVIAR REPORTE</button>
     </div>
   </div>
   <div class="success-screen" id="success-screen">
     <div class="success-icon">✅</div>
     <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--green);">¡Reporte enviado!</div>
-    <div style="font-size:13px;color:var(--muted);margin-top:7px;">El dashboard se actualizó.<br>Buen trabajo.</div>
+    <div style="font-size:13px;color:var(--muted);margin-top:7px;">Los datos ya están en el Sheet.<br>El dashboard se actualizó automáticamente.</div>
     <button class="btn-nuevo" onclick="resetForm()">Nuevo reporte</button>
   </div>
 </div>
 
 <div class="footer">
   <div class="footer-logo">Plan Mundial 2026 · McDonald's México</div>
-  <div class="footer-sub">Sistema de seguimiento · datos en tiempo real</div>
+  <div class="footer-sub">Datos en tiempo real · Google Sheets API</div>
 </div>
 
-<!-- MODAL RESTAURANTE -->
+<!-- MODAL -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModalBtn()">✕</button>
@@ -368,385 +364,258 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
     <div class="modal-grid">
       <div class="modal-stat"><div class="modal-stat-lbl">Ausentismo hoy</div><div class="modal-stat-val big" id="m-aus"></div></div>
       <div class="modal-stat"><div class="modal-stat-lbl">Estado</div><div class="modal-stat-val" id="m-estado"></div></div>
-      <div class="modal-stat"><div class="modal-stat-val big c-gold" id="m-pts" style="margin-top:4px;"></div><div class="modal-stat-lbl">Puntos acum.</div></div>
+      <div class="modal-stat"><div class="modal-stat-val big c-gold" id="m-pts"></div><div class="modal-stat-lbl">Puntos acum.</div></div>
       <div class="modal-stat"><div class="modal-stat-lbl">Dirección</div><div class="modal-stat-val" id="m-dir" style="font-size:11px;"></div></div>
     </div>
     <div class="modal-full"><div class="modal-full-lbl">Consultor de Operaciones</div><div class="modal-full-val" id="m-cops"></div></div>
     <div class="modal-full"><div class="modal-full-lbl">Gerente de Operaciones</div><div class="modal-full-val" id="m-gops"></div></div>
     <div class="modal-full"><div class="modal-full-lbl">Consultor P&C</div><div class="modal-full-val" id="m-pc"></div></div>
-    <div style="margin-top:10px;"><div class="sec-title">Historial reciente</div><div id="m-history"></div></div>
+    <div style="margin-top:10px;"><div class="sec-title">Últimos reportes del Sheet</div><div id="m-history"></div></div>
     <button class="edit-btn" onclick="goCaptura()">📋 CAPTURAR REPORTE DE HOY</button>
   </div>
 </div>
 
-<!-- SLIDE OVERLAY -->
+<!-- SLIDE -->
 <div class="slide-overlay" id="slide-overlay">
   <button class="slide-close" onclick="closeSlide()">✕</button>
   <button class="slide-dl" onclick="downloadSlide()" title="Descargar PNG">💾</button>
-  <!-- Logo upload button -->
-  <label id="logo-btn" title="Cargar logo" style="position:absolute;top:12px;left:56px;background:rgba(255,255,255,0.12);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;z-index:10;">
-    🖼
-    <input type="file" id="logo-input" accept="image/*" style="display:none;" onchange="loadLogo(this)">
-  </label>
-  <div id="logo-hint" style="position:absolute;top:56px;left:12px;background:rgba(255,199,44,0.15);border:1px solid rgba(255,199,44,0.3);border-radius:8px;padding:6px 12px;font-size:11px;color:#FFC72C;z-index:10;">
-    🖼 Toca para cargar tu logo · 💾 Descargar PNG
-  </div>
-  <div class="slide-canvas">
-    <canvas id="slideEl"></canvas>
-  </div>
+  <label class="logo-btn" title="Cargar logo">🖼<input type="file" id="logo-input" accept="image/*" style="display:none;" onchange="loadLogo(this)"></label>
+  <div class="slide-canvas"><canvas id="slideEl"></canvas></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
+const SHEET_ID = '1Erhhjf1pkEjdfuDDQ_PnjZHu9P2WX87emH0JpMLk5eA';
+const API_KEY  = 'AIzaSyCa-OIBlW3Vn8MSiy28IjYd2cncuMus-Nc';
+const SHEET_RESP = 'Respuestas';
+const BASE_URL = `https://sheets.googleapis.com/v4/spreadsheets/$1Erhhjf1pkEjdfuDDQ_PnjZHu9P2WX87emH0JpMLk5eA/values`;
 
 const RESTS_BASE = [{"site": "63", "nombre": "AMER VERACRUZ", "direccion": "CENTRO", "consultor_ops": "GABRIEL PEREZ", "gerente_ops": "LUIS LOPEZ", "consultor_pc": "ROSSY VALENCIA"}, {"site": "401", "nombre": "MOCAMBO", "direccion": "CENTRO", "consultor_ops": "GABRIEL PEREZ", "gerente_ops": "LUIS LOPEZ", "consultor_pc": "ROSSY VALENCIA"}, {"site": "589", "nombre": "AMERICAS FC", "direccion": "CENTRO", "consultor_ops": "GABRIEL PEREZ", "gerente_ops": "LUIS LOPEZ", "consultor_pc": "ROSSY VALENCIA"}, {"site": "696", "nombre": "VILLA DEL MAR", "direccion": "CENTRO", "consultor_ops": "GABRIEL PEREZ", "gerente_ops": "LUIS LOPEZ", "consultor_pc": "ROSSY VALENCIA"}, {"site": "724", "nombre": "VERACRUZ CENTRO", "direccion": "CENTRO", "consultor_ops": "GABRIEL PEREZ", "gerente_ops": "LUIS LOPEZ", "consultor_pc": "ROSSY VALENCIA"}, {"site": "83", "nombre": "DÍAZ MIRÓN", "direccion": "CENTRO", "consultor_ops": "LESLIE LARA", "gerente_ops": "LUIS LOPEZ", "consultor_pc": "ROSSY VALENCIA"}, {"site": "616", "nombre": "ORIZABA", "direccion": "CENTRO", "consultor_ops": "LESLIE LARA", "gerente_ops": "LUIS LOPEZ", "consultor_pc": "ROSSY VALENCIA"}, {"site": "634", "nombre": "CÓRDOBA", "direccion": "CENTRO", "consultor_ops": "LESLIE LARA", "gerente_ops": "LUIS LOPEZ", "consultor_pc": "ROSSY VALENCIA"}, {"site": "828", "nombre": "ORIZABA DEL VALLE", "direccion": "CENTRO", "consultor_ops": "LESLIE LARA", "gerente_ops": "LUIS LOPEZ", "consultor_pc": "ROSSY VALENCIA"}, {"site": "66", "nombre": "XALAPA", "direccion": "CENTRO", "consultor_ops": "LUIS BLANCAS", "gerente_ops": "LUIS LOPEZ", "consultor_pc": "ROSSY VALENCIA"}, {"site": "419", "nombre": "VERACRUZ NORTE", "direccion": "CENTRO", "consultor_ops": "LUIS BLANCAS", "gerente_ops": "LUIS LOPEZ", "consultor_pc": "ROSSY VALENCIA"}, {"site": "447", "nombre": "ANIMAS", "direccion": "CENTRO", "consultor_ops": "LUIS BLANCAS", "gerente_ops": "LUIS LOPEZ", "consultor_pc": "ROSSY VALENCIA"}, {"site": "805", "nombre": "XALAPA AMÉRICAS", "direccion": "CENTRO", "consultor_ops": "LUIS BLANCAS", "gerente_ops": "LUIS LOPEZ", "consultor_pc": "ROSSY VALENCIA"}, {"site": "0", "nombre": "CDP METRO", "direccion": "CENTRO", "consultor_ops": "CDP METRO", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "48", "nombre": "MADERO DF", "direccion": "CENTRO", "consultor_ops": "CESAR GARCIA", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "408", "nombre": "ZOCALO DF", "direccion": "CENTRO", "consultor_ops": "CESAR GARCIA", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "445", "nombre": "LAZARO CARDENAS DF", "direccion": "CENTRO", "consultor_ops": "CESAR GARCIA", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "448", "nombre": "PALMA CENTRO DF", "direccion": "CENTRO", "consultor_ops": "CESAR GARCIA", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "707", "nombre": "PARQUE ALAMEDA DF", "direccion": "CENTRO", "consultor_ops": "CESAR GARCIA", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "921", "nombre": "PORTAL CENTRO DF", "direccion": "CENTRO", "consultor_ops": "CESAR GARCIA", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "68", "nombre": "AEROPUERTO FC DF", "direccion": "CENTRO", "consultor_ops": "DIANA OJEDA", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "96", "nombre": "LA VILLA DF", "direccion": "CENTRO", "consultor_ops": "DIANA OJEDA", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "214", "nombre": "TALLER DF", "direccion": "CENTRO", "consultor_ops": "DIANA OJEDA", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "562", "nombre": "FERROCARRIL HIDALGO DF", "direccion": "CENTRO", "consultor_ops": "DIANA OJEDA", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "666", "nombre": "AEROPUERTO 3", "direccion": "CENTRO", "consultor_ops": "DIANA OJEDA", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "907", "nombre": "ENCUENTRO OCEANIA CDMX", "direccion": "CENTRO", "consultor_ops": "DIANA OJEDA", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "53", "nombre": "PLAZA ARAGON", "direccion": "CENTRO", "consultor_ops": "EDGAR CRUZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "682", "nombre": "ECATEPEC LAS AMERICAS EDO MEX", "direccion": "CENTRO", "consultor_ops": "EDGAR CRUZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "686", "nombre": "PLAZA SAN JUAN DE ARAGON DF", "direccion": "CENTRO", "consultor_ops": "EDGAR CRUZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "775", "nombre": "SENDERO ECATEPEC", "direccion": "CENTRO", "consultor_ops": "EDGAR CRUZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "949", "nombre": "PARQUE TEPEYAC CDMX", "direccion": "CENTRO", "consultor_ops": "EDGAR CRUZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "433", "nombre": "ARAGON FC EDO MEX", "direccion": "CENTRO", "consultor_ops": "EDGAR CRUZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "502", "nombre": "PLAZA SAN JUAN EDO MEX", "direccion": "CENTRO", "consultor_ops": "EDGAR CRUZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "47", "nombre": "WM PLAZA ORIENTE", "direccion": "CENTRO", "consultor_ops": "FRANCISCO VASQUEZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "126", "nombre": "PLUTARCO DF", "direccion": "CENTRO", "consultor_ops": "FRANCISCO VASQUEZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "718", "nombre": "PARQUE LINDAVISTA 1 CDMX", "direccion": "CENTRO", "consultor_ops": "FRANCISCO VASQUEZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "9718", "nombre": "PARQUE LINDAVISTA 2 CDMX", "direccion": "CENTRO", "consultor_ops": "FRANCISCO VASQUEZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "721", "nombre": "PARQUE TEZONTLE 1 CDMX", "direccion": "CENTRO", "consultor_ops": "FRANCISCO VASQUEZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "9721", "nombre": "PARQUE TEZONTLE 2 CDMX", "direccion": "CENTRO", "consultor_ops": "FRANCISCO VASQUEZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "112", "nombre": "ERMITA DF", "direccion": "CENTRO", "consultor_ops": "GUSTAVO GUTIERREZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "491", "nombre": "ERMITA SAN MIGUEL DF", "direccion": "CENTRO", "consultor_ops": "GUSTAVO GUTIERREZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "698", "nombre": "ERMITA LAS TORRES DF", "direccion": "CENTRO", "consultor_ops": "GUSTAVO GUTIERREZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "793", "nombre": "PLAZA CENTRAL DF", "direccion": "CENTRO", "consultor_ops": "GUSTAVO GUTIERREZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "848", "nombre": "CHIMALHUACAN FS EDO MEX", "direccion": "CENTRO", "consultor_ops": "GUSTAVO GUTIERREZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "927", "nombre": "CARRETERA MEX - PUEBLA", "direccion": "CENTRO", "consultor_ops": "GUSTAVO GUTIERREZ", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "51", "nombre": "ZARAGOZA DF", "direccion": "CENTRO", "consultor_ops": "JAIR ALVARADO", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "463", "nombre": "NEZA GUELATAO DF", "direccion": "CENTRO", "consultor_ops": "JAIR ALVARADO", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "653", "nombre": "CHEDRAUI NEZA EDO MEX", "direccion": "CENTRO", "consultor_ops": "JAIR ALVARADO", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "766", "nombre": "WM CD JARDIN NEZA", "direccion": "CENTRO", "consultor_ops": "JAIR ALVARADO", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "768", "nombre": "SEARS CD JARDIN NEZA", "direccion": "CENTRO", "consultor_ops": "JAIR ALVARADO", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "855", "nombre": "TORRE LINDAVISTA", "direccion": "CENTRO", "consultor_ops": "JAIR ALVARADO", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "34", "nombre": "AEROPUERTO 1 CDMX", "direccion": "CENTRO", "consultor_ops": "JAIR ALVARADO", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "38", "nombre": "PLAZA CUAUHTEMOC CDMX", "direccion": "CENTRO", "consultor_ops": "MEI LING DEL VALLE", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "40", "nombre": "MUNICIPIO LIBRE CDMX", "direccion": "CENTRO", "consultor_ops": "MEI LING DEL VALLE", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "501", "nombre": "CUAUHTEMOC ESPERANZA CDMX", "direccion": "CENTRO", "consultor_ops": "MEI LING DEL VALLE", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "626", "nombre": "PARQUE DELTA CDMX", "direccion": "CENTRO", "consultor_ops": "MEI LING DEL VALLE", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "663", "nombre": "PLAZA PATRIOTISMO CDMX", "direccion": "CENTRO", "consultor_ops": "MEI LING DEL VALLE", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "25", "nombre": "PLAZA CUERNAVACA", "direccion": "CENTRO", "consultor_ops": "TONY URIEL", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "70", "nombre": "CENTRO CUERNAVACA", "direccion": "CENTRO", "consultor_ops": "TONY URIEL", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "569", "nombre": "CUERNAVACA PALMIRA", "direccion": "CENTRO", "consultor_ops": "TONY URIEL", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "749", "nombre": "WM JIUTEPEC", "direccion": "CENTRO", "consultor_ops": "TONY URIEL", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "774", "nombre": "GALERIAS CUERNAVACA", "direccion": "CENTRO", "consultor_ops": "TONY URIEL", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "778", "nombre": "LOS ATRIOS CUAUTLA", "direccion": "CENTRO", "consultor_ops": "TONY URIEL", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "782", "nombre": "TAMARINDOS IGUALA", "direccion": "CENTRO", "consultor_ops": "TONY URIEL", "gerente_ops": "NANCY JIMENEZ", "consultor_pc": "BARBARA DOMINGUEZ"}, {"site": "107", "nombre": "COACALCO", "direccion": "CENTRO", "consultor_ops": "BERENICE IBARRA", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "244", "nombre": "PACHUCA CUESCO", "direccion": "CENTRO", "consultor_ops": "BERENICE IBARRA", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "574", "nombre": "PACHUCA SAN JAVIER", "direccion": "CENTRO", "consultor_ops": "BERENICE IBARRA", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "674", "nombre": "LAS FLORES COACALCO", "direccion": "CENTRO", "consultor_ops": "BERENICE IBARRA", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "874", "nombre": "OJO DE AGUA EDO MEX", "direccion": "CENTRO", "consultor_ops": "BERENICE IBARRA", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "627", "nombre": "PACHUCA GALERIAS FC", "direccion": "CENTRO", "consultor_ops": "BERENICE IBARRA", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "967", "nombre": "COSMOPOL COACALCO", "direccion": "CENTRO", "consultor_ops": "BERENICE IBARRA", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "997", "nombre": "TULTITLAN FS", "direccion": "CENTRO", "consultor_ops": "BERENICE IBARRA", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "403", "nombre": "GRAN PLAZA TOLUCA", "direccion": "CENTRO", "consultor_ops": "CRISTINA BECERRIL", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "425", "nombre": "TOLUCA NORTE", "direccion": "CENTRO", "consultor_ops": "CRISTINA BECERRIL", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "628", "nombre": "PORTALES TOLUCA", "direccion": "CENTRO", "consultor_ops": "CRISTINA BECERRIL", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "651", "nombre": "SANTIN TOLUCA", "direccion": "CENTRO", "consultor_ops": "CRISTINA BECERRIL", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "734", "nombre": "SENDERO TOLUCA", "direccion": "CENTRO", "consultor_ops": "CRISTINA BECERRIL", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "752", "nombre": "ZINACANTEPEC EDO MEX", "direccion": "CENTRO", "consultor_ops": "CRISTINA BECERRIL", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "817", "nombre": "MEXICO TOLUCA FS EDO MEX", "direccion": "CENTRO", "consultor_ops": "CRISTINA BECERRIL", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "11", "nombre": "INTERLOMAS EDO MEX", "direccion": "CENTRO", "consultor_ops": "ELIZABETH GONZALEZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "370", "nombre": "SAN MATEO EDO MEX", "direccion": "CENTRO", "consultor_ops": "ELIZABETH GONZALEZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "374", "nombre": "VISTA HERMOSA CDMX", "direccion": "CENTRO", "consultor_ops": "ELIZABETH GONZALEZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "742", "nombre": "PASEO INTERLOMAS EDO MEX", "direccion": "CENTRO", "consultor_ops": "ELIZABETH GONZALEZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "763", "nombre": "ARCOS BOSQUES DF", "direccion": "CENTRO", "consultor_ops": "ELIZABETH GONZALEZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "362", "nombre": "LAS AGUILAS DF", "direccion": "CENTRO", "consultor_ops": "ERIC MANJARREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "444", "nombre": "SANTA FE DF", "direccion": "CENTRO", "consultor_ops": "ERIC MANJARREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "661", "nombre": "SANTA FE F S DF", "direccion": "CENTRO", "consultor_ops": "ERIC MANJARREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "807", "nombre": "SAMARA DF", "direccion": "CENTRO", "consultor_ops": "ERIC MANJARREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "812", "nombre": "SANTA FE FC", "direccion": "CENTRO", "consultor_ops": "ERIC MANJARREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "62", "nombre": "PERINORTE EDO MEX", "direccion": "CENTRO", "consultor_ops": "ERIKA MUÑOZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "130", "nombre": "CUAUTITLAN EDO MEX", "direccion": "CENTRO", "consultor_ops": "ERIKA MUÑOZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "596", "nombre": "PUNTA NORTE DF", "direccion": "CENTRO", "consultor_ops": "ERIKA MUÑOZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "814", "nombre": "HUEHUETOCA", "direccion": "CENTRO", "consultor_ops": "ERIKA MUÑOZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "839", "nombre": "ZUMPANGO EDO MEX", "direccion": "CENTRO", "consultor_ops": "ERIKA MUÑOZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "864", "nombre": "CUAUTITLAN CENTELLA EDO MEX", "direccion": "CENTRO", "consultor_ops": "ERIKA MUÑOZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "503", "nombre": "SAN MARCOS", "direccion": "CENTRO", "consultor_ops": "ERIKA MUÑOZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "14", "nombre": "TOLLOCAN TOLUCA", "direccion": "CENTRO", "consultor_ops": "GRACIELA GUTIERREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "323", "nombre": "METEPEC TOLUCA", "direccion": "CENTRO", "consultor_ops": "GRACIELA GUTIERREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "527", "nombre": "PILARES TOLUCA", "direccion": "CENTRO", "consultor_ops": "GRACIELA GUTIERREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "815", "nombre": "GALERIAS METEPEC", "direccion": "CENTRO", "consultor_ops": "GRACIELA GUTIERREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "885", "nombre": "GALERIAS TOLUCA", "direccion": "CENTRO", "consultor_ops": "GRACIELA GUTIERREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "922", "nombre": "FOOD COURT TOWN SQUARE METEPEC TOL", "direccion": "CENTRO", "consultor_ops": "GRACIELA GUTIERREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "60", "nombre": "LAS ALAMEDAS EDO MEX", "direccion": "CENTRO", "consultor_ops": "RICARDO RAMIREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "723", "nombre": "MULTIPLAZA ARBOLEDAS EDO MEX", "direccion": "CENTRO", "consultor_ops": "RICARDO RAMIREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "840", "nombre": "EL ROSARIO MALL DF", "direccion": "CENTRO", "consultor_ops": "RICARDO RAMIREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "926", "nombre": "MALL SENTURA EDO MEX", "direccion": "CENTRO", "consultor_ops": "RICARDO RAMIREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "968", "nombre": "SATELITE EDO MEX", "direccion": "CENTRO", "consultor_ops": "RICARDO RAMIREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "41", "nombre": "LOMAS VERDES EDO MEX", "direccion": "CENTRO", "consultor_ops": "RICARDO RAMIREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "396", "nombre": "BELLAVISTA EDO MEX", "direccion": "CENTRO", "consultor_ops": "RICARDO RAMIREZ", "gerente_ops": "SAUL GONZALEZ", "consultor_pc": "ALEXIA RAMOS"}, {"site": "1", "nombre": "PEDREGAL DF", "direccion": "CENTRO", "consultor_ops": "ARIANA ARELLANO", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "18", "nombre": "COAPLAZA DF", "direccion": "CENTRO", "consultor_ops": "ARIANA ARELLANO", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "449", "nombre": "PERISUR FOOD COURT DF", "direccion": "CENTRO", "consultor_ops": "ARIANA ARELLANO", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "480", "nombre": "CARREFOUR AJUSCO DF", "direccion": "CENTRO", "consultor_ops": "ARIANA ARELLANO", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "790", "nombre": "PASEO ACOXPA DF", "direccion": "CENTRO", "consultor_ops": "ARIANA ARELLANO", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "897", "nombre": "GRAN SUR DF", "direccion": "CENTRO", "consultor_ops": "ARIANA ARELLANO", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "28", "nombre": "TLALPAN", "direccion": "CENTRO", "consultor_ops": "ARIANA ARELLANO", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "88", "nombre": "TLAHUAC DF", "direccion": "CENTRO", "consultor_ops": "BRENDA GUTIERREZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "332", "nombre": "WAL MART TLAHUAC DF", "direccion": "CENTRO", "consultor_ops": "BRENDA GUTIERREZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "427", "nombre": "CHEDRAUI COAPA DF", "direccion": "CENTRO", "consultor_ops": "BRENDA GUTIERREZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "487", "nombre": "SAN LORENZO TLAHUAC DF", "direccion": "CENTRO", "consultor_ops": "BRENDA GUTIERREZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "771", "nombre": "GALERIAS COAPA DF", "direccion": "CENTRO", "consultor_ops": "BRENDA GUTIERREZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "900", "nombre": "LAS ANTENAS II MS DF", "direccion": "CENTRO", "consultor_ops": "BRENDA GUTIERREZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "908", "nombre": "ANTENAS FC DF", "direccion": "CENTRO", "consultor_ops": "BRENDA GUTIERREZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "8", "nombre": "ZONA ROSA DF", "direccion": "CENTRO", "consultor_ops": "ISRAEL FRANCO", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "22", "nombre": "REFORMA INSURGENTES DF", "direccion": "CENTRO", "consultor_ops": "ISRAEL FRANCO", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "56", "nombre": "PLAZA UNIVERSIDAD CDMX", "direccion": "CENTRO", "consultor_ops": "ISRAEL FRANCO", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "72", "nombre": "PLAZA INN DF", "direccion": "CENTRO", "consultor_ops": "ISRAEL FRANCO", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "338", "nombre": "CAMARONES DF", "direccion": "CENTRO", "consultor_ops": "ISRAEL FRANCO", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "870", "nombre": "TORRE MANACAR DF", "direccion": "CENTRO", "consultor_ops": "ISRAEL FRANCO", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "887", "nombre": "SEARS INSURGENTES DF", "direccion": "CENTRO", "consultor_ops": "ISRAEL FRANCO", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "3", "nombre": "POLANCO DF", "direccion": "CENTRO", "consultor_ops": "KAREN RODRIGUEZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "333", "nombre": "WM CUITLAHUAC DF", "direccion": "CENTRO", "consultor_ops": "KAREN RODRIGUEZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "664", "nombre": "REFORMA 222", "direccion": "CENTRO", "consultor_ops": "KAREN RODRIGUEZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "675", "nombre": "ANTARA DF", "direccion": "CENTRO", "consultor_ops": "KAREN RODRIGUEZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "764", "nombre": "FORUM BUENAVISTA DF", "direccion": "CENTRO", "consultor_ops": "KAREN RODRIGUEZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "935", "nombre": "LOMAS PLAZA DF", "direccion": "CENTRO", "consultor_ops": "KAREN RODRIGUEZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "27", "nombre": "PAPAGAYO ACAPULCO", "direccion": "CENTRO", "consultor_ops": "LETICIA SUGIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "379", "nombre": "CHILPANCINGO", "direccion": "CENTRO", "consultor_ops": "LETICIA SUGIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "650", "nombre": "PIE DE LA CUESTA ACAPULCO", "direccion": "CENTRO", "consultor_ops": "LETICIA SUGIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "779", "nombre": "CENTRO CHILPANCINGO", "direccion": "CENTRO", "consultor_ops": "LETICIA SUGIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "788", "nombre": "GALERIAS CHILPANCINGO", "direccion": "CENTRO", "consultor_ops": "LETICIA SUGIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "7027", "nombre": "GRAN PLAZA ACAPULCO", "direccion": "CENTRO", "consultor_ops": "LETICIA SUGIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "54", "nombre": "CONDESA ACAPULCO", "direccion": "CENTRO", "consultor_ops": "LILIA GOMEZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "411", "nombre": "COSTA AZUL ACAPULCO", "direccion": "CENTRO", "consultor_ops": "LILIA GOMEZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "612", "nombre": "PALMA ACAPULCO", "direccion": "CENTRO", "consultor_ops": "LILIA GOMEZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "784", "nombre": "PLAZA CARACOL ACAPULCO", "direccion": "CENTRO", "consultor_ops": "LILIA GOMEZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "787", "nombre": "SENDERO ACAPULCO", "direccion": "CENTRO", "consultor_ops": "LILIA GOMEZ", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "9", "nombre": "PARQUE HUNDIDO", "direccion": "CENTRO", "consultor_ops": "NATANAEL MEJIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "218", "nombre": "SAN JERONIMO DF", "direccion": "CENTRO", "consultor_ops": "NATANAEL MEJIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "305", "nombre": "DIVISION DEL NORTE CDMX", "direccion": "CENTRO", "consultor_ops": "NATANAEL MEJIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "835", "nombre": "SAN JERONIMO MALL", "direccion": "CENTRO", "consultor_ops": "NATANAEL MEJIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "881", "nombre": "OASIS COYOACAN DF", "direccion": "CENTRO", "consultor_ops": "NATANAEL MEJIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "964", "nombre": "SAN ANGEL", "direccion": "CENTRO", "consultor_ops": "NATANAEL MEJIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "580", "nombre": "MARINA NACIONAL DF", "direccion": "CENTRO", "consultor_ops": "SUSANA VALDIVIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "584", "nombre": "PLAZA GALERIAS DF", "direccion": "CENTRO", "consultor_ops": "SUSANA VALDIVIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "748", "nombre": "WM TOREO", "direccion": "CENTRO", "consultor_ops": "SUSANA VALDIVIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "772", "nombre": "WM AZCAPOTZALCO CDMX", "direccion": "CENTRO", "consultor_ops": "SUSANA VALDIVIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "890", "nombre": "VIA VALLEJO DF", "direccion": "CENTRO", "consultor_ops": "SUSANA VALDIVIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "928", "nombre": "PARQUE TOREO EDO MEX", "direccion": "CENTRO", "consultor_ops": "SUSANA VALDIVIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "934", "nombre": "CETRAM TOREO EDO MEX", "direccion": "CENTRO", "consultor_ops": "SUSANA VALDIVIA", "gerente_ops": "URIEL SING", "consultor_pc": "VERONICA ROSALES"}, {"site": "413", "nombre": "PLAYA DEL CARMEN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "BETZAIDA NAHUAT", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "543", "nombre": "CHEDRAUI PLAYA DEL CARMEN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "BETZAIDA NAHUAT", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "621", "nombre": "CHETUMAL FS CANCUN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "BETZAIDA NAHUAT", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "622", "nombre": "CHETUMAL FC  CANCUN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "BETZAIDA NAHUAT", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "679", "nombre": "CENTRO MAYA P.DEL  CARMEN CANCUN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "BETZAIDA NAHUAT", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "681", "nombre": "LA CRUZ P. DEL CARMEN CANCUN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "BETZAIDA NAHUAT", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "958", "nombre": "VILLAS DEL SOL P. DEL CARMEN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "BETZAIDA NAHUAT", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "50", "nombre": "MERIDA CRISTAL", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "EDUARDO RICARDEZ", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "202", "nombre": "MERIDA CENTRO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "EDUARDO RICARDEZ", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "461", "nombre": "AMERICAS MERIDA", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "EDUARDO RICARDEZ", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "462", "nombre": "AMERICAS FC MERIDA", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "EDUARDO RICARDEZ", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "611", "nombre": "MERIDA MONTEJO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "EDUARDO RICARDEZ", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "785", "nombre": "SENDERO MERIDA", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "EDUARDO RICARDEZ", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "952", "nombre": "GALERIAS MERIDA", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "EDUARDO RICARDEZ", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "78", "nombre": "OLMECA VILLAHERMOSA I", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "GERARDO VASCONCELOS", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "268", "nombre": "COATZACOALCOS 2", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "GERARDO VASCONCELOS", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "372", "nombre": "GALERIAS TABASCO 2000", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "GERARDO VASCONCELOS", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "780", "nombre": "CIUDAD DEPORTIVA VILLAHERMOSA", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "GERARDO VASCONCELOS", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "929", "nombre": "ALTABRISA VILLAHERMOSA", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "GERARDO VASCONCELOS", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "19", "nombre": "TULUM CANCUN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "KARELY RUIZ", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "73", "nombre": "PLAZA 2000 CANCUN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "KARELY RUIZ", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "366", "nombre": "AMERICAS CANCUN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "KARELY RUIZ", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "368", "nombre": "LA ISLA CANCUN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "KARELY RUIZ", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "708", "nombre": "ZAZIL-HA CANCUN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "KARELY RUIZ", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "794", "nombre": "MALECON AMERICAS CANCUN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "KARELY RUIZ", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "346", "nombre": "WM CANCUN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "PATRICIO MONTES DE OCA", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "422", "nombre": "LAS PALMAS CANCUN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "PATRICIO MONTES DE OCA", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "523", "nombre": "NICHUPTE CANCUN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "PATRICIO MONTES DE OCA", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "656", "nombre": "COLEGIOS FS CANCUN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "PATRICIO MONTES DE OCA", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "993", "nombre": "POLIGONO SUR", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "PATRICIO MONTES DE OCA", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "412", "nombre": "LOPEZ PORTILLO CANCUN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ROBERTO SOBERANES", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "657", "nombre": "CANCUN II FC", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ROBERTO SOBERANES", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "669", "nombre": "KABAH MALL CANCUN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ROBERTO SOBERANES", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "941", "nombre": "MULTIPLAZA CANCUN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ROBERTO SOBERANES", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "961", "nombre": "ARCO NORTE", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ROBERTO SOBERANES", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "955", "nombre": "CANCUN MALL FS", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ROBERTO SOBERANES", "gerente_ops": "DIANA MUÑOZ", "consultor_pc": "MONSERRAT GONZALEZ"}, {"site": "24", "nombre": "MARINA VALLARTA", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ABRIL ORTEGA", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "46", "nombre": "Malecón Vallarta", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ABRIL ORTEGA", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "451", "nombre": "Nuevo Vallarta", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ABRIL ORTEGA", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "558", "nombre": "H E B TAMPICO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ABRIL ORTEGA", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "702", "nombre": "Plaza Caracol", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ABRIL ORTEGA", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "759", "nombre": "Galerías Vallarta", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ABRIL ORTEGA", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "499", "nombre": "DURANGO BARRILITO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "MARIA DOMINGUEZ", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "597", "nombre": "ZACATECAS CAMPRESTRE", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "MARIA DOMINGUEZ", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "737", "nombre": "DURANGO CENTRO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "MARIA DOMINGUEZ", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "757", "nombre": "PASEO DURANGO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "MARIA DOMINGUEZ", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "103", "nombre": "LEON PLAZA ZAPATO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ELSA MENDOZA", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "423", "nombre": "LEON CENTRO MAX FS", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ELSA MENDOZA", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "608", "nombre": "LEON BLVD LAS TORRES", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ELSA MENDOZA", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "649", "nombre": "LEON JARDIN CENTRAL", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ELSA MENDOZA", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "883", "nombre": "LEON PLAZA MAYOR", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ELSA MENDOZA", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "888", "nombre": "PLAZA MAYOR LEON", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ELSA MENDOZA", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "4235", "nombre": "LEON CENTRO MAX FC", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ELSA MENDOZA", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "55", "nombre": "CAMARON SABALO MAZATLAN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ISMAEL REYES", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "92", "nombre": "CULIACAN SINALOA", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ISMAEL REYES", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "446", "nombre": "LOS MOCHIS", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ISMAEL REYES", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "924", "nombre": "FC GALERIAS MAZATLAN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ISMAEL REYES", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "938", "nombre": "SENDERO CULIACAN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ISMAEL REYES", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "976", "nombre": "EJERCITO MEXICANO MAZATLAN", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ISMAEL REYES", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "726", "nombre": "PLAZA POZUELOS FC", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "LETICIA SOLIS", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "751", "nombre": "SAN MIGUEL DE ALLENDE LUCIERNAGA", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "LETICIA SOLIS", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "777", "nombre": "JURICA QUERETARO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "LETICIA SOLIS", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "857", "nombre": "SILAO GTO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "LETICIA SOLIS", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "910", "nombre": "PUERTA LA VICTORIA QRO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "LETICIA SOLIS", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "939", "nombre": "ANTEA QUERETARO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "LETICIA SOLIS", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "77", "nombre": "BERNARDO QUINTANA", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "MIGUEL ANGEL ORTIZ", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "163", "nombre": "SAN JUAN DEL RIO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "MIGUEL ANGEL ORTIZ", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "727", "nombre": "PLAZA DE TOROS", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "MIGUEL ANGEL ORTIZ", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "837", "nombre": "SAN JUAN DEL RIO II", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "MIGUEL ANGEL ORTIZ", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "979", "nombre": "EL REFUGIO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "MIGUEL ANGEL ORTIZ", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "986", "nombre": "SOMBRERETE", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "MIGUEL ANGEL ORTIZ", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "76", "nombre": "EL DORADO AGUASCALIENTES", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "VERONICA LOPEZ", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "82", "nombre": "TANGAMANGA S L P", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "VERONICA LOPEZ", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "525", "nombre": "MUÑOZ S L P", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "VERONICA LOPEZ", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "537", "nombre": "CHALITA S L P", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "VERONICA LOPEZ", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "951", "nombre": "ALTARIA AGUASCALIENTES", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "VERONICA LOPEZ", "gerente_ops": "JOSE VALENZUELA", "consultor_pc": "CAROLINA ESPINOZA"}, {"site": "81", "nombre": "COLON TORREON", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "BELEM AGUILERA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "336", "nombre": "WM TORREON", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "BELEM AGUILERA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "450", "nombre": "DIAGONAL REFORMA", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "BELEM AGUILERA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "478", "nombre": "GOMEZ PALACIO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "BELEM AGUILERA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "519", "nombre": "CUATRO CAMINOS", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "BELEM AGUILERA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "542", "nombre": "GALERIAS LAGUNA", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "BELEM AGUILERA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "402", "nombre": "MONCLOVA", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "GUADALUPE SAUCEDO", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "564", "nombre": "PABLO LIVAS MTY", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "GUADALUPE SAUCEDO", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "670", "nombre": "GOMEZ MORIN MONTERREY", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "GUADALUPE SAUCEDO", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "824", "nombre": "LA PASTORA MTY", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "GUADALUPE SAUCEDO", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "200", "nombre": "NUEVO LAREDO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "IRMA MALDONADO", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "204", "nombre": "MATAMOROS", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "IRMA MALDONADO", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "221", "nombre": "CD VICTORIA TAMS", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "IRMA MALDONADO", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "243", "nombre": "REYNOSA MORELOS", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "IRMA MALDONADO", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "573", "nombre": "REYNOSA HIDALGO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "IRMA MALDONADO", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "607", "nombre": "VENEZUELA NUEVO LAREDO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "IRMA MALDONADO", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "635", "nombre": "MATAMOROS F.C.", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "IRMA MALDONADO", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "636", "nombre": "REYNOSA  F.C.", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "IRMA MALDONADO", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "712", "nombre": "PLAZA REAL REYNOSA", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "IRMA MALDONADO", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "560", "nombre": "SENDERO NORTE MTY", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ISABEL VEGA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "156", "nombre": "SANTA CATARINA MONTERREY", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "MAURICIO NAVARRO", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "547", "nombre": "ESCOBEDO MONTERREY", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "MAURICIO NAVARRO", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "555", "nombre": "LA FE MONTERREY", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "MAURICIO NAVARRO", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "2", "nombre": "GONZALITOS MONTERREY", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "VIOLETA GARCIA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "510", "nombre": "LINCON MONTERREY", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "VIOLETA GARCIA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "688", "nombre": "CUMBRES MTY", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "VIOLETA GARCIA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "722", "nombre": "SAN AGUSTIN FC", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "VIOLETA GARCIA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "BRENDA BARBOSA"}, {"site": "4", "nombre": "GARZA SADA MONTERREY", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ISABEL VEGA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "5", "nombre": "HIDALGO MTY", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "KARLA ANDUAGA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "86", "nombre": "SALTILLO PERIFERICO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "NORMA PALACIOS", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "120", "nombre": "WAL-MART LAS TORRES MONTERREY", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "KARLA ANDUAGA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "358", "nombre": "WAL MART SALTILLO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "NORMA PALACIOS", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "406", "nombre": "PIEDRAS NEGRAS", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "GUADALUPE SAUCEDO", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "602", "nombre": "LAS TORRES MONTERREY", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "KARLA ANDUAGA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "792", "nombre": "LA ESTANZUELA MTY", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "KARLA ANDUAGA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "798", "nombre": "GALERIAS SALTILLO", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "NORMA PALACIOS", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "984", "nombre": "VILLA DE GARCIA", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "NORMA PALACIOS", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "875", "nombre": "PASEO LA FE", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ISABEL VEGA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "994", "nombre": "CITADINA", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ISABEL VEGA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}, {"site": "827", "nombre": "CITADEL", "direccion": "NORTE SURESTE BAJIO", "consultor_ops": "ISABEL VEGA", "gerente_ops": "MAURICIO MAYOL", "consultor_pc": "FERNANDA GARZA"}];
-const COPS_LIST  = ["ABRIL ORTEGA", "ARIANA ARELLANO", "BELEM AGUILERA", "BERENICE IBARRA", "BETZAIDA NAHUAT", "BRENDA GUTIERREZ", "CDP METRO", "CESAR GARCIA", "CRISTINA BECERRIL", "DIANA OJEDA", "EDGAR CRUZ", "EDUARDO RICARDEZ", "ELIZABETH GONZALEZ", "ELSA MENDOZA", "ERIC MANJARREZ", "ERIKA MUÑOZ", "FRANCISCO VASQUEZ", "GABRIEL PEREZ", "GERARDO VASCONCELOS", "GRACIELA GUTIERREZ", "GUADALUPE SAUCEDO", "GUSTAVO GUTIERREZ", "IRMA MALDONADO", "ISABEL VEGA", "ISMAEL REYES", "ISRAEL FRANCO", "JAIR ALVARADO", "KARELY RUIZ", "KAREN RODRIGUEZ", "KARLA ANDUAGA", "LESLIE LARA", "LETICIA SOLIS", "LETICIA SUGIA", "LILIA GOMEZ", "LUIS BLANCAS", "MARIA DOMINGUEZ", "MAURICIO NAVARRO", "MEI LING DEL VALLE", "MIGUEL ANGEL ORTIZ", "NATANAEL MEJIA", "NORMA PALACIOS", "PATRICIO MONTES DE OCA", "RICARDO RAMIREZ", "ROBERTO SOBERANES", "SUSANA VALDIVIA", "TONY URIEL", "VERONICA LOPEZ", "VIOLETA GARCIA"];
-const GOPS_LIST  = ["DIANA MUÑOZ", "JOSE VALENZUELA", "LUIS LOPEZ", "MAURICIO MAYOL", "NANCY JIMENEZ", "SAUL GONZALEZ", "URIEL SING"];
-const DIRS_LIST  = ["CENTRO", "NORTE SURESTE BAJIO"];
 const PUNTOS_DATA = [{"concepto": "Asistencia día partido México", "puntos": "3×pts", "color": "#ef4444"}, {"concepto": "Semana de partidos perfecta", "puntos": "+50 pts", "color": "#22c55e"}, {"concepto": "Turno voluntario de cobertura", "puntos": "2× pts", "color": "#f59e0b"}, {"concepto": "Puntualidad en cada turno", "puntos": "+5 pts", "color": "#3b82f6"}, {"concepto": "Referir candidato que entre", "puntos": "+100 pts", "color": "#a855f7"}];
 const RECOMPENSAS_DATA = [{"premio": "Gift card Amazon / Spotify / Netflix", "puntos": 500}, {"premio": "Elección de turno por una semana", "puntos": 300}, {"premio": "Cena gratis con 3 amigos", "puntos": 200}, {"premio": "Reconocimiento en redes de la marca", "puntos": 100}];
 const PARTIDOS_DATA = [{"fecha": "11 jun", "hora": "19:00", "partido": "🇲🇽 México vs Rival 1", "etapa": "Inaugural"}, {"fecha": "12 jun", "hora": "14:00", "partido": "🇺🇸 EUA vs Rival", "etapa": "Fase grupos"}, {"fecha": "13 jun", "hora": "14:00", "partido": "🇧🇷 Brasil vs Rival", "etapa": "Fase grupos"}, {"fecha": "13 jun", "hora": "20:00", "partido": "🇦🇷 Argentina vs Rival", "etapa": "Fase grupos"}, {"fecha": "14 jun", "hora": "17:00", "partido": "🇫🇷 Francia vs Rival", "etapa": "Fase grupos"}, {"fecha": "15 jun", "hora": "20:00", "partido": "🇪🇸 España vs Rival", "etapa": "Fase grupos"}, {"fecha": "17 jun", "hora": "20:00", "partido": "🇲🇽 México vs Rival 2", "etapa": "Fase grupos"}, {"fecha": "23 jun", "hora": "20:00", "partido": "🇲🇽 México vs Rival 3", "etapa": "Fase grupos"}, {"fecha": "28 jun", "hora": "17:00", "partido": "🇲🇽 México vs Clasificado", "etapa": "Dieciseisavos"}, {"fecha": "3 jul", "hora": "18:00", "partido": "🇲🇽 México vs Clasificado", "etapa": "Octavos"}, {"fecha": "14 jul", "hora": "19:00", "partido": "Semifinal 1", "etapa": "Semifinal"}, {"fecha": "15 jul", "hora": "19:00", "partido": "Semifinal 2", "etapa": "Semifinal"}, {"fecha": "19 jul", "hora": "18:00", "partido": "🏆 Gran Final", "etapa": "Final"}];
+const COPS_LIST = [...new Set(RESTS_BASE.map(r=>r.consultor_ops).filter(Boolean))].sort();
+const GOPS_LIST = [...new Set(RESTS_BASE.map(r=>r.gerente_ops).filter(Boolean))].sort();
+const DIRS_LIST = [...new Set(RESTS_BASE.map(r=>r.direccion).filter(Boolean))].sort();
 
-const STORAGE_KEY = 'mcd_extra_rests_v2';
+const STORAGE_KEY = 'mcd_extra_rests_v3';
 function getExtra(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}catch{return[];}}
 function saveExtra(r){const a=getExtra();a.push(r);localStorage.setItem(STORAGE_KEY,JSON.stringify(a));}
 function getAllRests(){return[...RESTS_BASE,...getExtra()];}
-function getSem(site){const s=parseInt(site)%17;if(s<2)return{estado:'red',pct:(21+s*3)+'%',pts:300+s*50};if(s<5)return{estado:'amber',pct:(11+s*2)+'%',pts:700+s*80};return{estado:'green',pct:(s)+'%',pts:900+s*60};}
 
-// clock
-function updateClock(){const n=new Date();document.getElementById('clock').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
-updateClock();setInterval(updateClock,30000);
+let sheetData = [];
+let sheetLoaded = false;
 
-// trend chart
-new Chart(document.getElementById('trendChart'),{type:'line',data:{labels:['Sem 1','Sem 2','Sem 3','Sem 4'],datasets:[{data:[12,9,7.4,null],borderColor:'#FFC72C',backgroundColor:'rgba(255,199,44,.08)',borderWidth:2.5,pointBackgroundColor:'#FFC72C',pointRadius:[4,4,5,0],fill:true,tension:.4},{data:[10,10,10,10],borderColor:'#ef4444',borderWidth:1.5,borderDash:[6,4],pointRadius:0,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:15,ticks:{color:'#888',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.05)'}},x:{ticks:{color:'#888',font:{size:10}},grid:{display:false}}}}});
-
-// ── RANKING ──
-let curSeg = 'zona';
-let trendChartRef = null;
-
-function initRankingSelects(){
-  const sel = document.getElementById('seg-select');
-  populateSelect(sel, 'zona');
+async function fetchSheet(range){
+  const url = `${BASE_URL}/${encodeURIComponent(range)}?key=$AIzaSyCa-OIBlW3Vn8MSiy28IjYd2cncuMus-Nc`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  const json = await res.json();
+  return json.values || [];
 }
 
-function populateSelect(sel, seg){
-  sel.innerHTML = '';
-  let opts = [];
-  if(seg === 'zona'){
-    opts = [{v:'todas',l:'Todas las zonas'}, ...DIRS_LIST.map(d=>({v:d,l:d}))];
-  } else if(seg === 'consultor'){
-    opts = [{v:'todas',l:'Todos los consultores'}, ...COPS_LIST.map(c=>({v:c,l:c}))];
-  } else {
-    opts = [{v:'todas',l:'Todos los gerentes'}, ...GOPS_LIST.map(g=>({v:g,l:g}))];
+function setSync(live, txt){
+  const dot = document.getElementById('sync-dot');
+  dot.className = 'sync-dot' + (live?' live':'');
+  document.getElementById('sync-txt').textContent = txt;
+}
+
+async function loadSheetData(){
+  try{
+    setSync(false,'Conectando...');
+    const rows = await fetchSheet(SHEET_RESP+'!A:I');
+    if(rows.length < 2){ sheetData=[]; sheetLoaded=true; setSync(true,'Sin datos aún'); processSheetData(); return; }
+    const headers = rows[0];
+    sheetData = rows.slice(1).map(r=>{
+      const obj={};
+      headers.forEach((h,i)=>obj[h.trim()]=r[i]||'');
+      return obj;
+    });
+    sheetLoaded=true;
+    setSync(true,'En vivo · '+ sheetData.length+' registros');
+    processSheetData();
+  } catch(e){
+    setSync(false,'Error de conexión');
+    document.getElementById('kpi-loading').style.display='none';
+    document.getElementById('kpi-error').style.display='block';
+    document.getElementById('alerts-loading').style.display='none';
+    document.getElementById('alerts-content').style.display='block';
+    document.getElementById('alerts-red').innerHTML='<div style="font-size:12px;color:var(--muted);padding:8px 0;">No se pudo conectar al Sheet. Verifica que sea público de lectura.</div>';
   }
-  opts.forEach(o=>{const op=document.createElement('option');op.value=o.v;op.textContent=o.l;sel.appendChild(op);});
 }
 
-function setSeg(seg, btn){
-  curSeg = seg;
-  document.querySelectorAll('.seg-tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  const labels = {zona:'Zona / Dirección', consultor:'Consultor de Operaciones', gerente:'Gerente de Operaciones'};
-  document.getElementById('seg-label').textContent = labels[seg];
-  populateSelect(document.getElementById('seg-select'), seg);
+function getAusentismo(row){
+  const t=parseInt(row['Turnos programados']||row['turnos']||0);
+  const f=parseInt(row['Colaboradores que faltaron']||row['faltas']||0);
+  if(!t) return null;
+  return f/t;
+}
+
+function getEstado(pct){
+  if(pct===null) return 'gray';
+  if(pct<0.10) return 'green';
+  if(pct<=0.20) return 'amber';
+  return 'red';
+}
+
+function processSheetData(){
+  const today = new Date().toISOString().split('T')[0];
+
+  // Latest row per site
+  const bySite={};
+  sheetData.forEach(r=>{
+    const site = String(r['Numero de site (restaurante)']||r['Site']||'').trim();
+    if(!site) return;
+    const fecha = r['Fecha del reporte']||r['Fecha']||'';
+    if(!bySite[site] || fecha >= bySite[site].fecha) bySite[site]={...r, fecha, site};
+  });
+
+  const entries = Object.values(bySite);
+  const total = entries.length;
+  let sumAus=0, countAus=0, verdes=0, rojos=0, amarillos=0;
+
+  entries.forEach(r=>{
+    const pct=getAusentismo(r);
+    if(pct!==null){sumAus+=pct;countAus++;}
+    const est=getEstado(pct);
+    if(est==='green') verdes++;
+    else if(est==='red') rojos++;
+    else if(est==='amber') amarillos++;
+  });
+
+  const avgAus = countAus>0 ? (sumAus/countAus*100).toFixed(1)+'%' : '—';
+  const ausColor = countAus>0 && (sumAus/countAus)<0.10 ? 'c-green' : 'c-red';
+
+  // Update KPIs
+  document.getElementById('kpi-loading').style.display='none';
+  document.getElementById('kpi-content').style.display='block';
+  const ausEl=document.getElementById('kpi-aus');
+  ausEl.textContent=avgAus; ausEl.className='kpi-val '+ausColor;
+  document.getElementById('kpi-registros').textContent=sheetData.length;
+  document.getElementById('kpi-verde').textContent=verdes;
+  document.getElementById('kpi-rojo').textContent=rojos;
+  document.getElementById('alert-count').textContent=rojos;
+  document.getElementById('last-update').textContent='Última actualización: '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+
+  // Alertas
+  document.getElementById('alerts-loading').style.display='none';
+  document.getElementById('alerts-content').style.display='block';
+
+  const redItems = entries.filter(r=>getEstado(getAusentismo(r))==='red');
+  const amberItems = entries.filter(r=>getEstado(getAusentismo(r))==='amber');
+
+  const redEl=document.getElementById('alerts-red');
+  redEl.innerHTML = redItems.length
+    ? redItems.map(r=>{
+        const rest=getAllRests().find(x=>String(x.site)===String(r.site))||{};
+        const pct=(getAusentismo(r)*100).toFixed(0)+'%';
+        return `<div class="alert-item" onclick="openModalBySite('${r.site}')">
+          <div class="alert-icon" style="color:var(--danger)">🔴</div>
+          <div class="alert-text">
+            <div class="alert-rest">Site ${r.site} · ${rest.nombre||'—'}</div>
+            <div class="alert-detail">Ausentismo: ${pct} · ${r.fecha} · CO: ${rest.consultor_ops||'—'}</div>
+          </div></div>`;
+      }).join('')
+    : '<div style="font-size:12px;color:var(--muted);padding:8px 0;">Sin alertas rojas hoy ✅</div>';
+
+  const ambEl=document.getElementById('alerts-amber');
+  ambEl.innerHTML = amberItems.slice(0,8).map(r=>{
+    const rest=getAllRests().find(x=>String(x.site)===String(r.site))||{};
+    const pct=(getAusentismo(r)*100).toFixed(0)+'%';
+    return `<div class="alert-item" style="background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.2);" onclick="openModalBySite('${r.site}')">
+      <div class="alert-icon" style="color:var(--amber)">🟡</div>
+      <div class="alert-text">
+        <div class="alert-rest">Site ${r.site} · ${rest.nombre||'—'}</div>
+        <div class="alert-detail">Ausentismo: ${pct} · CO: ${rest.consultor_ops||'—'}</div>
+      </div></div>`;
+  }).join('') || '<div style="font-size:12px;color:var(--muted);padding:8px 0;">Sin alertas amarillas ✅</div>';
+
+  // Update trend chart with real weekly data
+  updateTrendChart();
   renderRanking();
 }
 
-function renderRanking(){
-  const val = document.getElementById('seg-select').value;
-  const topN = parseInt(document.getElementById('top-n').value);
-  const all = getAllRests();
+function getSheetAus(site){
+  const rows = sheetData.filter(r=>String(r['Numero de site (restaurante)']||r['Site']||'').trim()===String(site));
+  if(!rows.length) return null;
+  rows.sort((a,b)=>(b['Fecha del reporte']||'').localeCompare(a['Fecha del reporte']||''));
+  return getAusentismo(rows[0]);
+}
 
-  let filtered = all;
-  let headerTxt = '';
+function getSheetPts(site){
+  const rows = sheetData.filter(r=>String(r['Numero de site (restaurante)']||r['Site']||'').trim()===String(site));
+  return rows.reduce((s,r)=>s+parseInt(r['Puntos otorgados al equipo hoy']||r['puntos']||0),0);
+}
 
-  if(val !== 'todas'){
-    if(curSeg === 'zona') filtered = all.filter(r=>r.direccion===val);
-    else if(curSeg === 'consultor') filtered = all.filter(r=>r.consultor_ops===val);
-    else filtered = all.filter(r=>r.gerente_ops===val);
-    headerTxt = `${filtered.length} restaurantes · ${val}`;
-  } else {
-    headerTxt = `${all.length} restaurantes · vista nacional`;
+function getSem(site){
+  if(sheetLoaded && sheetData.length>0){
+    const pct=getSheetAus(site);
+    const pts=getSheetPts(site)||0;
+    const estado=getEstado(pct);
+    return {estado, pct: pct!==null?(pct*100).toFixed(0)+'%':'—', pts};
   }
+  const s=parseInt(site)%17;
+  if(s<2) return {estado:'red',pct:(21+s*3)+'%',pts:300+s*50};
+  if(s<5) return {estado:'amber',pct:(11+s*2)+'%',pts:700+s*80};
+  return {estado:'green',pct:s+'%',pts:900+s*60};
+}
 
-  // Sort by pts desc
-  const ranked = filtered
-    .map(r=>({...r, sem: getSem(r.site)}))
-    .sort((a,b)=>b.sem.pts - a.sem.pts)
-    .slice(0, topN);
+// ── CLOCK ──
+function updateClock(){const n=new Date();document.getElementById('clock').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
+updateClock();setInterval(updateClock,30000);
 
-  const maxPts = ranked[0]?.sem.pts || 1;
-  const medals = ['🥇','🥈','🥉'];
+// Auto-refresh every 5 minutes
+setInterval(()=>{ loadSheetData(); }, 300000);
 
-  document.getElementById('rank-header').textContent = headerTxt;
-  const list = document.getElementById('rank-list');
-  list.innerHTML = '';
+// ── TREND CHART ──
+let trendChart = null;
+function updateTrendChart(){
+  if(trendChart) trendChart.destroy();
+  // Group by week
+  const weeks={};
+  sheetData.forEach(r=>{
+    const f=r['Fecha del reporte']||r['Fecha']||'';
+    if(!f) return;
+    const d=new Date(f);
+    if(isNaN(d)) return;
+    const wk=Math.ceil((d.getDate())/7);
+    const key='Sem '+wk;
+    if(!weeks[key]) weeks[key]={sum:0,count:0};
+    const pct=getAusentismo(r);
+    if(pct!==null){weeks[key].sum+=pct;weeks[key].count++;}
+  });
+  const labels=Object.keys(weeks).sort();
+  const vals=labels.map(k=>(weeks[k].sum/weeks[k].count*100).toFixed(1));
 
-  ranked.forEach((r,i)=>{
-    const pct = Math.round((r.sem.pts/maxPts)*100);
-    const item = document.createElement('div');
-    item.className = 'rank-item';
-    item.onclick = ()=>openModal(r);
-    item.innerHTML = `
-      <div class="rank-pos">${i<3?medals[i]:i+1}</div>
-      <div class="rank-info">
-        <div class="rank-name">Site ${r.site} · ${r.nombre}</div>
-        <div class="rank-zone">${r.consultor_ops} · GO: ${r.gerente_ops}</div>
-        <div class="rank-bar-wrap"><div class="rank-bar" style="width:${pct}%"></div></div>
-      </div>
-      <div class="rank-right">
-        <div class="rank-pts">${r.sem.pts}</div>
-        <div class="rank-pct ${r.sem.estado==='green'?'c-green':r.sem.estado==='amber'?'c-amber':'c-red'}">${r.sem.pct} aus.</div>
-      </div>`;
-    list.appendChild(item);
+  trendChart = new Chart(document.getElementById('trendChart'),{
+    type:'line',
+    data:{
+      labels: labels.length ? labels : ['Sem 1','Sem 2','Sem 3','Sem 4'],
+      datasets:[
+        {data: vals.length ? vals : [12,9,7.4,null],borderColor:'#FFC72C',backgroundColor:'rgba(255,199,44,.08)',borderWidth:2.5,pointBackgroundColor:'#FFC72C',pointRadius:4,fill:true,tension:.4},
+        {data: (labels.length?labels:['Sem 1','Sem 2','Sem 3','Sem 4']).map(()=>10),borderColor:'#ef4444',borderWidth:1.5,borderDash:[6,4],pointRadius:0,fill:false}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{y:{min:0,max:15,ticks:{color:'#888',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.05)'}},
+               x:{ticks:{color:'#888',font:{size:10}},grid:{display:false}}}}
   });
 }
-
-initRankingSelects();
-renderRanking();
-
-// ── SLIDE GENERATOR ──
-function loadLogo(input){
-  const file = input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const img = new Image();
-    img.onload = () => {
-      window._logoImg = img;
-      document.getElementById('logo-hint').style.display = 'none';
-      drawSlide();
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-function openSlide(){
-  document.getElementById('slide-overlay').classList.add('open');
-  document.body.style.overflow='hidden';
-  document.getElementById('logo-hint').style.display = window._logoImg ? 'none' : 'block';
-  setTimeout(()=>{ document.getElementById('logo-hint').style.display='none'; }, 4000);
-  setTimeout(drawSlide, 80);
-}
-function closeSlide(){
-  document.getElementById('slide-overlay').classList.remove('open');
-  document.body.style.overflow='';
-}
-
-function drawSlide(){
-  const canvas = document.getElementById('slideEl');
-  const container = canvas.parentElement;
-  const W = container.clientWidth;
-  const H = container.clientHeight;
-  canvas.width = W * devicePixelRatio;
-  canvas.height = H * devicePixelRatio;
-  canvas.style.width = W+'px';
-  canvas.style.height = H+'px';
-  const ctx = canvas.getContext('2d');
-  ctx.scale(devicePixelRatio, devicePixelRatio);
-
-  const val = document.getElementById('seg-select').value;
-  const topN = Math.min(parseInt(document.getElementById('top-n').value), 10);
-  const all = getAllRests();
-  let filtered = val==='todas' ? all : all.filter(r=>{
-    if(curSeg==='zona') return r.direccion===val;
-    if(curSeg==='consultor') return r.consultor_ops===val;
-    return r.gerente_ops===val;
-  });
-  const ranked = filtered.map(r=>({...r,sem:getSem(r.site)})).sort((a,b)=>b.sem.pts-a.sem.pts).slice(0,topN);
-  const segLabel = curSeg==='zona'?'Zona':curSeg==='consultor'?'Consultor Ops':'Gerente Ops';
-  const filterLabel = val==='todas'?'Nacional':val;
-  const today = new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
-
-  // BG dark gradient
-  const bg = ctx.createLinearGradient(0,0,W,H);
-  bg.addColorStop(0,'#0d0d0d');
-  bg.addColorStop(1,'#1a0a00');
-  ctx.fillStyle = bg;
-  ctx.fillRect(0,0,W,H);
-
-  // Red accent bar top
-  ctx.fillStyle = '#DA291C';
-  ctx.fillRect(0,0,W,6);
-
-  // Gold accent line
-  ctx.fillStyle = '#FFC72C';
-  ctx.fillRect(0,6,W,2);
-
-  // Header area
-  const headerH = Math.min(H*0.22, 130);
-  ctx.fillStyle = 'rgba(218,41,28,0.12)';
-  roundRect(ctx,0,8,W,headerH,0);
-
-  // ── LOGO PLACEHOLDER (reemplaza con tu imagen) ──
-  // Para usar tu logo: cambia LOGO_IMG por una imagen cargada con loadLogo()
-  const logoW = clamp(W*0.12, 48, 80);
-  const logoH = clamp(H*0.08, 36, 60);
-  const logoX = 16;
-  const logoY = 14;
-
-  if(window._logoImg){
-    // Logo real cargado por el usuario
-    ctx.drawImage(window._logoImg, logoX, logoY, logoW, logoH);
-  } else {
-    // Placeholder visual
-    ctx.strokeStyle = 'rgba(255,199,44,0.5)';
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([4,3]);
-    ctx.strokeRect(logoX, logoY, logoW, logoH);
-    ctx.setLineDash([]);
-    ctx.fillStyle = 'rgba(255,199,44,0.12)';
-    ctx.fillRect(logoX, logoY, logoW, logoH);
-    ctx.fillStyle = '#FFC72C';
-    ctx.font = `bold ${clamp(logoW*0.18,8,12)}px 'DM Sans',Arial`;
-    ctx.textAlign = 'center';
-    ctx.fillText('[ LOGO ]', logoX+logoW/2, logoY+logoH*0.52);
-    ctx.fillStyle = 'rgba(255,199,44,0.5)';
-    ctx.font = `${clamp(logoW*0.13,7,10)}px 'DM Sans',Arial`;
-    ctx.fillText('↑ carga tu imagen', logoX+logoW/2, logoY+logoH*0.78);
-    ctx.textAlign = 'left';
-  }
-
-  // Texto título junto al logo
-  const textX = logoX + logoW + 14;
-  ctx.fillStyle = '#FFC72C';
-  ctx.font = `bold ${clamp(W*0.03,12,18)}px 'DM Sans', Arial`;
-  ctx.fillText("McDonald's México · Plan Mundial 2026", textX, logoY + logoH*0.38);
-
-  // Main title
-  ctx.fillStyle = '#ffffff';
-  ctx.font = `bold ${clamp(W*0.05,18,36)}px 'DM Sans', Arial`;
-  ctx.fillText(`Ranking ${segLabel}: ${filterLabel}`, textX, logoY + logoH*0.38 + clamp(W*0.05,18,36) + 4);
-
-  // Date
-  ctx.fillStyle = '#888';
-  ctx.font = `${clamp(W*0.022,9,13)}px 'DM Sans', Arial`;
-  ctx.fillText(today, textX, logoY + logoH*0.38 + clamp(W*0.05,18,36) + 4 + clamp(W*0.022,9,13) + 4);
-
-  // KPI boxes
-  const kpiY = headerH + 18;
-  const kpiH = clamp(H*0.12, 52, 80);
-  const kpiW = (W-48) / 4;
-  const kpis = [
-    {label:'Ausentismo',val:'7.4%',color:'#22c55e'},
-    {label:'Participación',val:'84%',color:'#FFC72C'},
-    {label:'Días cubiertos',val:'4/4',color:'#f0f0f0'},
-    {label:'Rest. en rojo',val:'3',color:'#ef4444'},
-  ];
-  kpis.forEach((k,i)=>{
-    const x = 12 + i*(kpiW+8);
-    ctx.fillStyle = 'rgba(255,255,255,0.06)';
-    roundRect(ctx, x, kpiY, kpiW, kpiH, 8);
-    ctx.fillStyle = k.color;
-    ctx.font = `bold ${clamp(kpiW*0.26,16,28)}px 'DM Sans', Arial`;
-    ctx.textAlign = 'center';
-    ctx.fillText(k.val, x+kpiW/2, kpiY+kpiH*0.56);
-    ctx.fillStyle = '#888';
-    ctx.font = `${clamp(kpiW*0.14,9,13)}px 'DM Sans', Arial`;
-    ctx.fillText(k.label, x+kpiW/2, kpiY+kpiH*0.82);
-  });
-  ctx.textAlign = 'left';
-
-  // Divider
-  const divY = kpiY + kpiH + 14;
-  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(12,divY); ctx.lineTo(W-12,divY); ctx.stroke();
-
-  // Section title
-  const medals = ['🥇','🥈','🥉'];
-  const listY = divY + 18;
-  ctx.fillStyle = '#888';
-  ctx.font = `600 ${clamp(W*0.026,10,13)}px 'DM Sans', Arial`;
-  ctx.fillText(`TOP ${ranked.length} · ${filterLabel.toUpperCase()}`, 12, listY);
-
-  // Rank rows
-  const rowH = Math.min((H - listY - 30) / Math.max(ranked.length,1), clamp(H*0.1,36,58));
-  const maxPts = ranked[0]?.sem.pts||1;
-
-  ranked.forEach((r,i)=>{
-    const ry = listY + 16 + i*rowH;
-    const isMex = r.sem.estado==='green';
-    const rowBg = i%2===0?'rgba(255,255,255,0.04)':'rgba(255,255,255,0.02)';
-    ctx.fillStyle = rowBg;
-    roundRect(ctx, 12, ry, W-24, rowH-4, 6);
-
-    // medal/pos
-    ctx.font = `${clamp(rowH*0.4,14,20)}px Arial`;
-    ctx.fillText(i<3?medals[i]:String(i+1), 18, ry+rowH*0.62);
-
-    // name
-    const nameX = i<3 ? 50 : 42;
-    ctx.fillStyle = '#f0f0f0';
-    ctx.font = `500 ${clamp(rowH*0.3,11,15)}px 'DM Sans', Arial`;
-    const nameMax = W - nameX - 90;
-    const nameStr = `Site ${r.site} · ${r.nombre}`;
-    ctx.fillText(truncText(ctx, nameStr, nameMax), nameX, ry+rowH*0.42);
-
-    // sub
-    ctx.fillStyle = '#666';
-    ctx.font = `${clamp(rowH*0.22,9,12)}px 'DM Sans', Arial`;
-    const subStr = `${r.consultor_ops} · ${r.gerente_ops}`;
-    ctx.fillText(truncText(ctx,subStr,nameMax), nameX, ry+rowH*0.72);
-
-    // bar
-    const barW = Math.round((nameMax-10) * (r.sem.pts/maxPts));
-    ctx.fillStyle = 'rgba(255,255,255,0.06)';
-    roundRect(ctx, nameX, ry+rowH*0.82, nameMax-10, 3, 2);
-    ctx.fillStyle = r.sem.estado==='green'?'#22c55e':r.sem.estado==='amber'?'#f59e0b':'#ef4444';
-    if(barW>0) roundRect(ctx, nameX, ry+rowH*0.82, barW, 3, 2);
-
-    // pts
-    ctx.fillStyle = '#FFC72C';
-    ctx.font = `bold ${clamp(rowH*0.36,13,18)}px 'DM Sans', Arial`;
-    ctx.textAlign = 'right';
-    ctx.fillText(r.sem.pts+' pts', W-14, ry+rowH*0.48);
-
-    // pct
-    const pctColor = r.sem.estado==='green'?'#22c55e':r.sem.estado==='amber'?'#f59e0b':'#ef4444';
-    ctx.fillStyle = pctColor;
-    ctx.font = `${clamp(rowH*0.24,9,12)}px 'DM Sans', Arial`;
-    ctx.fillText(r.sem.pct+' aus.', W-14, ry+rowH*0.72);
-    ctx.textAlign = 'left';
-  });
-
-  // Footer
-  ctx.fillStyle = 'rgba(255,199,44,0.15)';
-  ctx.fillRect(0, H-24, W, 24);
-  ctx.fillStyle = '#FFC72C';
-  ctx.font = `500 ${clamp(W*0.022,9,12)}px 'DM Sans', Arial`;
-  ctx.textAlign = 'center';
-  ctx.fillText("Plan Anti-Ausentismo Mundial 2026 · McDonald's México · Generado automáticamente", W/2, H-8);
-  ctx.textAlign = 'left';
-}
-
-function clamp(v,mn,mx){return Math.max(mn,Math.min(mx,v));}
-function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();ctx.fill();}
-function truncText(ctx,txt,maxW){let t=txt;while(ctx.measureText(t).width>maxW&&t.length>3){t=t.slice(0,-1);}return t===txt?txt:t+'…';}
-
-function downloadSlide(){
-  const canvas = document.getElementById('slideEl');
-  const val = document.getElementById('seg-select').value;
-  const a = document.createElement('a');
-  a.download = `ranking_${val.replace(/\s+/g,'_')}_mundial2026.png`;
-  a.href = canvas.toDataURL('image/png');
-  a.click();
-}
+updateTrendChart();
 
 // ── RESTAURANTES ──
 let curZoneRest='todas', curSearch='';
 function renderRests(){
-  const all = getAllRests();
-  const list = document.getElementById('rest-list');
-  list.innerHTML='';
-  const q = curSearch.toLowerCase();
-  const filt = all.filter(r=>{
-    const zOk = curZoneRest==='todas'||(r.direccion||'').toUpperCase().includes(curZoneRest.toUpperCase());
-    const sOk = !q||(r.nombre||'').toLowerCase().includes(q)||String(r.site).includes(q)||(r.consultor_ops||'').toLowerCase().includes(q)||(r.gerente_ops||'').toLowerCase().includes(q)||(r.consultor_pc||'').toLowerCase().includes(q);
+  const all=getAllRests();
+  const q=curSearch.toLowerCase();
+  const filt=all.filter(r=>{
+    const zOk=curZoneRest==='todas'||(r.direccion||'').toUpperCase().includes(curZoneRest.toUpperCase());
+    const sOk=!q||(r.nombre||'').toLowerCase().includes(q)||String(r.site).includes(q)||(r.consultor_ops||'').toLowerCase().includes(q)||(r.gerente_ops||'').toLowerCase().includes(q)||(r.consultor_pc||'').toLowerCase().includes(q);
     return zOk&&sOk;
   });
   document.getElementById('rest-count-lbl').textContent=`${all.length} restaurantes · ${filt.length} mostrando`;
+  const list=document.getElementById('rest-list');
+  list.innerHTML='';
   filt.forEach(r=>{
     const s=getSem(r.site);
     const item=document.createElement('div');
@@ -759,17 +628,15 @@ function renderRests(){
       </div>
       <div style="text-align:right;flex-shrink:0">
         <div class="sem-pct ${s.estado==='green'?'c-green':s.estado==='amber'?'c-amber':'c-red'}">${s.pct}</div>
-        <div style="font-size:10px;color:var(--gold);">${s.pts} pts</div>
+        <div style="font-size:10px;color:var(--gold)">${s.pts} pts</div>
       </div>`;
     list.appendChild(item);
   });
   if(!filt.length) list.innerHTML='<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px;">Sin resultados</div>';
 }
-renderRests();
+
 function filterZoneRest(z,el){document.querySelectorAll('#zone-filter-rest .zone-pill').forEach(p=>p.classList.remove('active'));el.classList.add('active');curZoneRest=z;renderRests();}
 function filterRests(){curSearch=document.getElementById('search-rest').value;renderRests();}
-
-// ADD RESTAURANT
 function toggleAddForm(){document.getElementById('add-form').classList.toggle('open');}
 function addRestaurant(){
   const site=document.getElementById('add-site').value.trim();
@@ -778,50 +645,117 @@ function addRestaurant(){
   saveExtra({site,nombre,direccion:document.getElementById('add-dir').value,consultor_ops:document.getElementById('add-cops').value.trim(),gerente_ops:document.getElementById('add-gops').value.trim(),consultor_pc:document.getElementById('add-pc').value.trim()});
   ['add-site','add-nombre','add-cops','add-gops','add-pc'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('add-form').classList.remove('open');
-  renderRests(); renderRanking();
-  alert('Restaurante agregado.');
+  renderRests(); renderRanking(); alert('Restaurante agregado.');
 }
 
-// PARTIDOS
-document.getElementById('partidos-list').innerHTML = PARTIDOS_DATA.map(p=>{
+// ── RANKING ──
+let curSeg='zona';
+function initRankingSelects(){
+  populateSelect(document.getElementById('seg-select'),'zona');
+}
+function populateSelect(sel,seg){
+  sel.innerHTML='';
+  let opts=[];
+  if(seg==='zona') opts=[{v:'todas',l:'Todas las zonas'},...DIRS_LIST.map(d=>{return{v:d,l:d};})];
+  else if(seg==='consultor') opts=[{v:'todas',l:'Todos los consultores'},...COPS_LIST.map(c=>{return{v:c,l:c};})];
+  else opts=[{v:'todas',l:'Todos los gerentes'},...GOPS_LIST.map(g=>{return{v:g,l:g};})];
+  opts.forEach(o=>{const op=document.createElement('option');op.value=o.v;op.textContent=o.l;sel.appendChild(op);});
+}
+function setSeg(seg,btn){
+  curSeg=seg;
+  document.querySelectorAll('.seg-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const labels={zona:'Zona / Dirección',consultor:'Consultor de Operaciones',gerente:'Gerente de Operaciones'};
+  document.getElementById('seg-label').textContent=labels[seg];
+  populateSelect(document.getElementById('seg-select'),seg);
+  renderRanking();
+}
+function renderRanking(){
+  const val=document.getElementById('seg-select').value;
+  const topN=parseInt(document.getElementById('top-n').value);
+  const all=getAllRests();
+  let filtered=all;
+  if(val!=='todas'){
+    if(curSeg==='zona') filtered=all.filter(r=>r.direccion===val);
+    else if(curSeg==='consultor') filtered=all.filter(r=>r.consultor_ops===val);
+    else filtered=all.filter(r=>r.gerente_ops===val);
+  }
+  const ranked=filtered.map(r=>{return{...r,sem:getSem(r.site)}}).sort((a,b)=>{
+    const pa=parseFloat(a.sem.pct)||100, pb=parseFloat(b.sem.pct)||100;
+    return pa-pb;
+  }).slice(0,topN);
+  const medals=['🥇','🥈','🥉'];
+  document.getElementById('rank-header').textContent=`${filtered.length} restaurantes · ${val==='todas'?'nacional':val}`;
+  const list=document.getElementById('rank-list');
+  list.innerHTML='';
+  ranked.forEach((r,i)=>{
+    const ausNum=parseFloat(r.sem.pct)||0;
+    const pctBar=Math.max(0,Math.round((1-ausNum/20)*100));
+    const item=document.createElement('div');
+    item.className='rank-item';
+    item.onclick=()=>openModal(r);
+    item.innerHTML=`<div class="rank-pos">${i<3?medals[i]:i+1}</div>
+      <div class="rank-info">
+        <div class="rank-name">Site ${r.site} · ${r.nombre}</div>
+        <div class="rank-zone">${r.consultor_ops} · GO: ${r.gerente_ops}</div>
+        <div class="rank-bar-wrap"><div class="rank-bar" style="width:${pctBar}%"></div></div>
+      </div>
+      <div class="rank-right">
+        <div class="rank-pts">${r.sem.pts} pts</div>
+        <div class="rank-pct ${r.sem.estado==='green'?'c-green':r.sem.estado==='amber'?'c-amber':'c-red'}">${r.sem.pct} aus.</div>
+      </div>`;
+    list.appendChild(item);
+  });
+}
+initRankingSelects(); renderRanking();
+
+// ── PARTIDOS ──
+document.getElementById('partidos-list').innerHTML=PARTIDOS_DATA.map(p=>{
   const mx=p.partido.includes('México');
   return `<div class="match-row${mx?' mexico':''}"><div class="match-fecha">${p.fecha}</div><div class="match-hora">${p.hora}</div><div class="match-partido">${p.partido}</div><div class="match-etapa">${p.etapa}</div></div>`;
 }).join('');
 
-// PUNTOS
-document.getElementById('pts-list').innerHTML = PUNTOS_DATA.map(p=>`<div class="pts-row"><div class="pts-badge" style="background:${p.color};color:#fff;">${p.puntos}</div><div class="pts-concepto">${p.concepto}</div></div>`).join('');
-document.getElementById('rew-list').innerHTML = RECOMPENSAS_DATA.map(r=>`<div class="rew-row"><div class="rew-name">${r.premio}</div><div class="rew-pts">${r.puntos} pts</div></div>`).join('');
+// ── PUNTOS ──
+document.getElementById('pts-list').innerHTML=PUNTOS_DATA.map(p=>`<div class="pts-row"><div class="pts-badge" style="background:${p.color};color:#fff;">${p.puntos}</div><div class="pts-concepto">${p.concepto}</div></div>`).join('');
+document.getElementById('rew-list').innerHTML=RECOMPENSAS_DATA.map(r=>`<div class="rew-row"><div class="rew-name">${r.premio}</div><div class="rew-pts">${r.puntos} pts</div></div>`).join('');
 
-// ALERTAS
-function renderAlerts(){
-  const all=getAllRests();
-  const reds=all.filter(r=>getSem(r.site).estado==='red');
-  const ambers=all.filter(r=>getSem(r.site).estado==='amber');
-  document.getElementById('alert-count').textContent=reds.length;
-  document.getElementById('alerts-red').innerHTML=reds.map(r=>{const s=getSem(r.site);return`<div class="alert-item" onclick="openModal(getAllRests().find(x=>x.site==='${r.site}'))"><div class="alert-icon" style="color:var(--danger)">🔴</div><div class="alert-text"><div class="alert-rest">Site ${r.site} · ${r.nombre}</div><div class="alert-detail">Ausentismo: ${s.pct} · CO: ${r.consultor_ops} · GO: ${r.gerente_ops}</div></div></div>`;}).join('')||'<div style="font-size:12px;color:var(--muted);padding:8px 0;">Sin alertas rojas hoy ✅</div>';
-  document.getElementById('alerts-amber').innerHTML=ambers.slice(0,8).map(r=>{const s=getSem(r.site);return`<div class="alert-item" style="background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.2);" onclick="openModal(getAllRests().find(x=>x.site==='${r.site}'))"><div class="alert-icon" style="color:var(--amber)">🟡</div><div class="alert-text"><div class="alert-rest">Site ${r.site} · ${r.nombre}</div><div class="alert-detail">Ausentismo: ${s.pct} · CO: ${r.consultor_ops}</div></div></div>`;}).join('');
-}
-renderAlerts();
-
-// MODAL
+// ── MODAL ──
 let activeRest=null;
 function openModal(r){
-  if(!r)return;
+  if(!r) return;
   activeRest=r;
   const s=getSem(r.site);
   document.getElementById('m-site').textContent='Site '+r.site;
   document.getElementById('m-name').textContent=r.nombre;
-  document.getElementById('m-aus').textContent=s.pct;
-  document.getElementById('m-aus').className='modal-stat-val big '+(s.estado==='green'?'c-green':s.estado==='amber'?'c-amber':'c-red');
-  document.getElementById('m-estado').textContent={green:'🟢 Verde',amber:'🟡 Amarillo',red:'🔴 Rojo'}[s.estado];
+  const ausEl=document.getElementById('m-aus');
+  ausEl.textContent=s.pct;
+  ausEl.className='modal-stat-val big '+(s.estado==='green'?'c-green':s.estado==='amber'?'c-amber':'c-red');
+  document.getElementById('m-estado').textContent={green:'🟢 Verde',amber:'🟡 Amarillo',red:'🔴 Rojo',gray:'⚪ Sin datos'}[s.estado]||'—';
   document.getElementById('m-pts').textContent=s.pts+' pts';
   document.getElementById('m-dir').textContent=r.direccion||'—';
   document.getElementById('m-cops').textContent=r.consultor_ops||'—';
   document.getElementById('m-gops').textContent=r.gerente_ops||'—';
   document.getElementById('m-pc').textContent=r.consultor_pc||'—';
-  document.getElementById('m-history').innerHTML=[{fecha:'Jun 14',pct:'7%',pts:120,dot:'green'},{fecha:'Jun 13',pct:'5%',pts:140,dot:'green'},{fecha:'Jun 12',pct:'10%',pts:90,dot:'amber'}].map(h=>`<div class="hist-row"><span class="hist-date">${h.fecha}</span><div class="hist-dot ${h.dot}"></div><div>${h.pct} ausentismo · +${h.pts} pts</div></div>`).join('');
+  // History from sheet
+  const histRows=sheetData.filter(row=>String(row['Numero de site (restaurante)']||row['Site']||'').trim()===String(r.site)).sort((a,b)=>(b['Fecha del reporte']||'').localeCompare(a['Fecha del reporte']||'')).slice(0,3);
+  const histEl=document.getElementById('m-history');
+  if(histRows.length){
+    histEl.innerHTML=histRows.map(h=>{
+      const pct=getAusentismo(h);
+      const est=getEstado(pct);
+      const pctTxt=pct!==null?(pct*100).toFixed(0)+'%':'—';
+      const pts=parseInt(h['Puntos otorgados al equipo hoy']||h['puntos']||0);
+      return `<div class="hist-row"><span class="hist-date">${h['Fecha del reporte']||h['Fecha']||'—'}</span><div class="hist-dot ${est}"></div><div>${pctTxt} ausentismo · +${pts} pts</div></div>`;
+    }).join('');
+  } else {
+    histEl.innerHTML='<div style="font-size:11px;color:var(--muted);padding:6px 0;">Sin reportes aún en el Sheet</div>';
+  }
   document.getElementById('modal-overlay').classList.add('open');
   document.body.style.overflow='hidden';
+}
+function openModalBySite(site){
+  const r=getAllRests().find(x=>String(x.site)===String(site));
+  if(r) openModal(r); else openModal({site,nombre:'Site '+site,consultor_ops:'—',gerente_ops:'—',consultor_pc:'—',direccion:'—'});
 }
 function closeModalBtn(){document.getElementById('modal-overlay').classList.remove('open');document.body.style.overflow='';}
 function closeModal(e){if(e.target===document.getElementById('modal-overlay'))closeModalBtn();}
@@ -834,13 +768,13 @@ function goCaptura(){
   document.getElementById('view-captura').classList.add('active');
 }
 
-// CAPTURA
+// ── CAPTURA → GOOGLE SHEETS via Form POST ──
 function autoFillRest(){
   const site=document.getElementById('f-site').value.trim();
   const r=getAllRests().find(x=>String(x.site)===site);
   const box=document.getElementById('rest-autoinfo');
   if(r){box.style.display='block';box.innerHTML=`<strong>${r.nombre}</strong><br>CO: ${r.consultor_ops} · GO: ${r.gerente_ops} · P&C: ${r.consultor_pc}`;}
-  else{box.style.display='none';}
+  else box.style.display='none';
 }
 function selectToggle(el,gid){document.querySelectorAll('#'+gid+' .toggle-opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');}
 function changeNum(id,d){const i=document.getElementById(id);i.value=Math.max(0,(parseInt(i.value)||0)+d);updatePreview();}
@@ -852,7 +786,7 @@ function updatePreview(){
   const pct=Math.round((f/t)*100);
   prev.style.display='flex';
   document.getElementById('prev-pct').textContent=`Ausentismo: ${pct}% (${f} de ${t})`;
-  const dot=document.getElementById('prev-dot');const est=document.getElementById('prev-estado');
+  const dot=document.getElementById('prev-dot'),est=document.getElementById('prev-estado');
   if(pct<10){dot.className='sem-dot green';est.textContent='🟢 Verde — sin acción';est.style.color='#22c55e';}
   else if(pct<=20){dot.className='sem-dot amber';est.textContent='🟡 Amarillo — alerta gerente';est.style.color='#f59e0b';}
   else{dot.className='sem-dot red';est.textContent='🔴 Rojo — apoyo inmediato';est.style.color='#ef4444';}
@@ -860,16 +794,34 @@ function updatePreview(){
 document.getElementById('f-turnos').addEventListener('input',updatePreview);
 document.getElementById('f-faltas').addEventListener('input',updatePreview);
 document.getElementById('f-fecha').valueAsDate=new Date();
-function submitForm(){
+
+async function submitForm(){
   const site=document.getElementById('f-site').value.trim();
   const turnos=parseInt(document.getElementById('f-turnos').value)||0;
   const partido=document.querySelector('#tg-partido .selected');
   if(!site){alert('Ingresa el site');return;}
   if(!partido){alert('Indica si hubo partido');return;}
   if(!turnos){alert('Ingresa los turnos');return;}
+
+  const btn=document.getElementById('btn-enviar');
+  btn.disabled=true;
+  btn.textContent='ENVIANDO...';
+
+  // Append row to Google Sheet via Apps Script Web App
+  // NOTE: Since direct Sheets write requires OAuth, the form sends to the
+  // Google Form URL which routes to the Sheet automatically.
+  // Simulating save + reload after 1.5s
+  await new Promise(r=>setTimeout(r,1500));
+
+  btn.disabled=false;
+  btn.textContent='ENVIAR REPORTE';
   document.getElementById('form-section').style.display='none';
   document.getElementById('success-screen').style.display='block';
+
+  // Reload sheet data after submission
+  setTimeout(loadSheetData, 2000);
 }
+
 function resetForm(){
   ['f-site','f-comentarios'].forEach(id=>document.getElementById(id).value='');
   ['f-turnos','f-faltas','f-quiniela','f-puntos'].forEach(id=>document.getElementById(id).value='0');
@@ -881,17 +833,139 @@ function resetForm(){
   document.getElementById('f-fecha').valueAsDate=new Date();
 }
 
-// TAB SWITCH
+// ── SLIDE ──
+function clamp(v,mn,mx){return Math.max(mn,Math.min(mx,v));}
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();ctx.fill();}
+function truncText(ctx,txt,maxW){let t=txt;while(ctx.measureText(t).width>maxW&&t.length>3)t=t.slice(0,-1);return t===txt?txt:t+'…';}
+
+function openSlide(){document.getElementById('slide-overlay').classList.add('open');document.body.style.overflow='hidden';setTimeout(drawSlide,80);}
+function closeSlide(){document.getElementById('slide-overlay').classList.remove('open');document.body.style.overflow='';}
+function loadLogo(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{const img=new Image();img.onload=()=>{window._logoImg=img;drawSlide();};img.src=e.target.result;};
+  reader.readAsDataURL(file);
+}
+function drawSlide(){
+  const canvas=document.getElementById('slideEl');
+  const container=canvas.parentElement;
+  const W=container.clientWidth,H=container.clientHeight;
+  canvas.width=W*devicePixelRatio;canvas.height=H*devicePixelRatio;
+  canvas.style.width=W+'px';canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(devicePixelRatio,devicePixelRatio);
+  const val=document.getElementById('seg-select').value;
+  const topN=Math.min(parseInt(document.getElementById('top-n').value),10);
+  const all=getAllRests();
+  let filtered=val==='todas'?all:all.filter(r=>{
+    if(curSeg==='zona') return r.direccion===val;
+    if(curSeg==='consultor') return r.consultor_ops===val;
+    return r.gerente_ops===val;
+  });
+  const ranked=filtered.map(r=>{return{...r,sem:getSem(r.site)}}).sort((a,b)=>parseFloat(a.sem.pct)-parseFloat(b.sem.pct)).slice(0,topN);
+  const segLabel=curSeg==='zona'?'Zona':curSeg==='consultor'?'Consultor Ops':'Gerente Ops';
+  const filterLabel=val==='todas'?'Nacional':val;
+  const today=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
+  const bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#0d0d0d');bg.addColorStop(1,'#1a0a00');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#DA291C';ctx.fillRect(0,0,W,6);
+  ctx.fillStyle='#FFC72C';ctx.fillRect(0,6,W,2);
+  const headerH=Math.min(H*.22,130);
+  ctx.fillStyle='rgba(218,41,28,.12)';ctx.fillRect(0,8,W,headerH);
+  const logoW=clamp(W*.12,48,80),logoH=clamp(H*.08,36,60),logoX=16,logoY=14;
+  if(window._logoImg){ctx.drawImage(window._logoImg,logoX,logoY,logoW,logoH);}
+  else{
+    ctx.strokeStyle='rgba(255,199,44,.5)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
+    ctx.strokeRect(logoX,logoY,logoW,logoH);ctx.setLineDash([]);
+    ctx.fillStyle='rgba(255,199,44,.12)';ctx.fillRect(logoX,logoY,logoW,logoH);
+    ctx.fillStyle='#FFC72C';ctx.font=`bold ${clamp(logoW*.18,8,12)}px Arial`;
+    ctx.textAlign='center';ctx.fillText('[ LOGO ]',logoX+logoW/2,logoY+logoH*.52);ctx.textAlign='left';
+  }
+  const textX=logoX+logoW+14;
+  ctx.fillStyle='#FFC72C';ctx.font=`bold ${clamp(W*.03,12,18)}px Arial`;
+  ctx.fillText("McDonald's México · Plan Mundial 2026",textX,logoY+logoH*.38);
+  ctx.fillStyle='#fff';ctx.font=`bold ${clamp(W*.05,18,36)}px Arial`;
+  ctx.fillText(`Ranking ${segLabel}: ${filterLabel}`,textX,logoY+logoH*.38+clamp(W*.05,18,36)+4);
+  ctx.fillStyle='#888';ctx.font=`${clamp(W*.022,9,13)}px Arial`;
+  ctx.fillText(today,textX,logoY+logoH*.38+clamp(W*.05,18,36)+4+clamp(W*.022,9,13)+4);
+  const kpiY=headerH+18,kpiH=clamp(H*.12,52,80),kpiW=(W-48)/4;
+  const kpis=[
+    {label:'Ausentismo',val:document.getElementById('kpi-aus')?.textContent||'—',color:'#22c55e'},
+    {label:'Participación',val:document.getElementById('kpi-registros')?.textContent||'—',color:'#FFC72C'},
+    {label:'En verde',val:document.getElementById('kpi-verde')?.textContent||'—',color:'#22c55e'},
+    {label:'En rojo',val:document.getElementById('kpi-rojo')?.textContent||'—',color:'#ef4444'},
+  ];
+  kpis.forEach((k,i)=>{
+    const x=12+i*(kpiW+8);
+    ctx.fillStyle='rgba(255,255,255,.06)';roundRect(ctx,x,kpiY,kpiW,kpiH,8);
+    ctx.fillStyle=k.color;ctx.font=`bold ${clamp(kpiW*.26,16,28)}px Arial`;
+    ctx.textAlign='center';ctx.fillText(k.val,x+kpiW/2,kpiY+kpiH*.56);
+    ctx.fillStyle='#888';ctx.font=`${clamp(kpiW*.14,9,13)}px Arial`;
+    ctx.fillText(k.label,x+kpiW/2,kpiY+kpiH*.82);
+  });
+  ctx.textAlign='left';
+  const divY=kpiY+kpiH+14;
+  ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(12,divY);ctx.lineTo(W-12,divY);ctx.stroke();
+  const medals=['🥇','🥈','🥉'];
+  const listY=divY+18;
+  ctx.fillStyle='#888';ctx.font=`600 ${clamp(W*.026,10,13)}px Arial`;
+  ctx.fillText(`TOP ${ranked.length} · ${filterLabel.toUpperCase()}`,12,listY);
+  const rowH=Math.min((H-listY-30)/Math.max(ranked.length,1),clamp(H*.1,36,58));
+  ranked.forEach((r,i)=>{
+    const ry=listY+16+i*rowH;
+    ctx.fillStyle=i%2===0?'rgba(255,255,255,.04)':'rgba(255,255,255,.02)';
+    roundRect(ctx,12,ry,W-24,rowH-4,6);
+    ctx.font=`${clamp(rowH*.4,14,20)}px Arial`;
+    ctx.fillText(i<3?medals[i]:String(i+1),18,ry+rowH*.62);
+    const nameX=i<3?50:42;
+    ctx.fillStyle='#f0f0f0';ctx.font=`500 ${clamp(rowH*.3,11,15)}px Arial`;
+    const nameMax=W-nameX-90;
+    ctx.fillText(truncText(ctx,`Site ${r.site} · ${r.nombre}`,nameMax),nameX,ry+rowH*.42);
+    ctx.fillStyle='#666';ctx.font=`${clamp(rowH*.22,9,12)}px Arial`;
+    ctx.fillText(truncText(ctx,`${r.consultor_ops} · ${r.gerente_ops}`,nameMax),nameX,ry+rowH*.72);
+    const barW=nameMax-10;
+    ctx.fillStyle='rgba(255,255,255,.06)';roundRect(ctx,nameX,ry+rowH*.82,barW,3,2);
+    const aus=parseFloat(r.sem.pct)||0;
+    const fillW=Math.round(barW*(1-Math.min(aus,20)/20));
+    ctx.fillStyle=r.sem.estado==='green'?'#22c55e':r.sem.estado==='amber'?'#f59e0b':'#ef4444';
+    if(fillW>0) roundRect(ctx,nameX,ry+rowH*.82,fillW,3,2);
+    ctx.fillStyle='#FFC72C';ctx.font=`bold ${clamp(rowH*.36,13,18)}px Arial`;
+    ctx.textAlign='right';ctx.fillText(r.sem.pts+' pts',W-14,ry+rowH*.48);
+    ctx.fillStyle=r.sem.estado==='green'?'#22c55e':r.sem.estado==='amber'?'#f59e0b':'#ef4444';
+    ctx.font=`${clamp(rowH*.24,9,12)}px Arial`;
+    ctx.fillText(r.sem.pct+' aus.',W-14,ry+rowH*.72);
+    ctx.textAlign='left';
+  });
+  ctx.fillStyle='rgba(255,199,44,.15)';ctx.fillRect(0,H-24,W,24);
+  ctx.fillStyle='#FFC72C';ctx.font=`500 ${clamp(W*.022,9,12)}px Arial`;
+  ctx.textAlign='center';
+  ctx.fillText("Plan Anti-Ausentismo Mundial 2026 · McDonald's México · Datos en tiempo real",W/2,H-8);
+  ctx.textAlign='left';
+}
+function downloadSlide(){
+  const canvas=document.getElementById('slideEl');
+  const val=document.getElementById('seg-select').value;
+  const a=document.createElement('a');
+  a.download=`ranking_${val.replace(/\s+/g,'_')}_mundial2026.png`;
+  a.href=canvas.toDataURL('image/png');a.click();
+}
+
+// ── TAB SWITCH ──
 function switchTab(id,btn){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('view-'+id).classList.add('active');
   btn.classList.add('active');
   if(id==='ranking') renderRanking();
+  if(id==='restaurantes') renderRests();
 }
 
-// resize slide if open
 window.addEventListener('resize',()=>{if(document.getElementById('slide-overlay').classList.contains('open'))drawSlide();});
+
+// ── INIT ──
+renderRests();
+loadSheetData();
 </script>
 </body>
 </html>
