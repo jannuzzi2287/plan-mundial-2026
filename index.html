@@ -592,16 +592,16 @@ function getSheetPts(site){
 }
 
 function getSem(site){
-  if(sheetLoaded && sheetData.length>0){
-    const pct=getSheetAus(site);
-    const pts=getSheetPts(site)||0;
-    const estado=getEstado(pct);
-    return {estado, pct: pct!==null?(pct*100).toFixed(0)+'%':'—', pts};
-  }
-  const s=parseInt(site)%17;
-  if(s<2) return {estado:'red',pct:(21+s*3)+'%',pts:300+s*50};
-  if(s<5) return {estado:'amber',pct:(11+s*2)+'%',pts:700+s*80};
-  return {estado:'green',pct:s+'%',pts:900+s*60};
+  // Only show real data from Sheet — no simulated data
+  const pct = getSheetAus(site);
+  const pts = getSheetPts(site)||0;
+  const estado = pct !== null ? getEstado(pct) : 'gray';
+  return {
+    estado,
+    pct: pct !== null ? (pct*100).toFixed(0)+'%' : '—',
+    pts: pts || 0,
+    hasData: pct !== null
+  };
 }
 
 // ── CLOCK ──
@@ -665,14 +665,15 @@ function renderRests(){
     const item=document.createElement('div');
     item.className='sem-item';
     item.onclick=()=>openModal(r);
-    item.innerHTML=`<div class="sem-dot ${s.estado}"></div>
+    const pctColor = s.estado==='green'?'c-green':s.estado==='amber'?'c-amber':s.estado==='red'?'c-red':'';
+    const dotClass = s.hasData ? s.estado : 'gray';
+    item.innerHTML=`<div class="sem-dot ${dotClass}" style="${!s.hasData?'background:var(--muted);box-shadow:none;':''}"></div>
       <div style="flex:1;min-width:0">
         <div class="sem-name">Site ${r.site} · ${r.nombre}</div>
         <div class="sem-sub">${r.consultor_ops} · GO: ${r.gerente_ops}</div>
       </div>
       <div style="text-align:right;flex-shrink:0">
-        <div class="sem-pct ${s.estado==='green'?'c-green':s.estado==='amber'?'c-amber':'c-red'}">${s.pct}</div>
-        <div style="font-size:10px;color:var(--gold)">${s.pts} pts</div>
+        ${s.hasData ? `<div class="sem-pct ${pctColor}">${s.pct}</div><div style="font-size:10px;color:var(--gold)">${s.pts} pts</div>` : `<div style="font-size:11px;color:var(--muted)">Sin reporte</div>`}
       </div>`;
     list.appendChild(item);
   });
@@ -724,14 +725,22 @@ function renderRanking(){
     else if(curSeg==='consultor') filtered=all.filter(r=>r.consultor_ops===val);
     else filtered=all.filter(r=>r.gerente_ops===val);
   }
-  const ranked=filtered.map(r=>{return{...r,sem:getSem(r.site)}}).sort((a,b)=>{
-    const pa=parseFloat(a.sem.pct)||100, pb=parseFloat(b.sem.pct)||100;
-    return pa-pb;
-  }).slice(0,topN);
+  const ranked=filtered
+    .map(r=>({...r,sem:getSem(r.site)}))
+    .filter(r=>r.sem.hasData)  // only rank restaurants with real data
+    .sort((a,b)=>parseFloat(a.sem.pct)-parseFloat(b.sem.pct))
+    .slice(0,topN);
   const medals=['🥇','🥈','🥉'];
-  document.getElementById('rank-header').textContent=`${filtered.length} restaurantes · ${val==='todas'?'nacional':val}`;
+  const withData = filtered.filter(r=>getSem(r.site).hasData).length;
+  document.getElementById('rank-header').textContent = withData > 0
+    ? `${withData} con reporte · ${filtered.length} total · ${val==='todas'?'nacional':val}`
+    : `Sin reportes aún — ${filtered.length} restaurantes esperando captura`;
   const list=document.getElementById('rank-list');
   list.innerHTML='';
+  if(ranked.length===0){
+    list.innerHTML='<div style="text-align:center;padding:32px 16px;color:var(--muted);font-size:13px;">⏳ El ranking aparecerá cuando los gerentes envíen sus reportes diarios.</div>';
+    return;
+  }
   ranked.forEach((r,i)=>{
     const ausNum=parseFloat(r.sem.pct)||0;
     const pctBar=Math.max(0,Math.round((1-ausNum/20)*100));
