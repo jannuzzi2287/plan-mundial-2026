@@ -429,6 +429,15 @@ async function loadSheetData(){
     sheetData = rows.slice(1).map(r=>{
       const obj={};
       headers.forEach((h,i)=>obj[h.trim()]=r[i]||'');
+      // Aliases for flexible column name matching
+      obj['site']    = obj['No. Restaurante']||obj['Numero de site (restaurante)']||obj['Site']||'';
+      obj['fecha']   = obj['Fecha']||obj['Fecha del reporte']||'';
+      obj['turnos']  = obj['Turnos programados']||'0';
+      obj['faltas']  = obj['Colaboradores que faltaron']||'0';
+      obj['quiniela']= obj['Participaron en quiniela']||'0';
+      obj['puntos']  = obj['Puntos otorgados (equipo)']||obj['Puntos otorgados al equipo hoy']||'0';
+      obj['partido'] = obj['¿Partido hoy?']||'';
+      obj['comentarios'] = obj['Comentarios / incidentes']||'';
       return obj;
     });
     sheetLoaded=true;
@@ -445,8 +454,8 @@ async function loadSheetData(){
 }
 
 function getAusentismo(row){
-  const t=parseInt(row['Turnos programados']||row['turnos']||0);
-  const f=parseInt(row['Colaboradores que faltaron']||row['faltas']||0);
+  const t=parseInt(row['turnos']||row['Turnos programados']||0);
+  const f=parseInt(row['faltas']||row['Colaboradores que faltaron']||0);
   if(!t) return null;
   return f/t;
 }
@@ -464,9 +473,9 @@ function processSheetData(){
   // Latest row per site
   const bySite={};
   sheetData.forEach(r=>{
-    const site = String(r['Numero de site (restaurante)']||r['Site']||'').trim();
+    const site = String(r['site']||'').trim();
     if(!site) return;
-    const fecha = r['Fecha del reporte']||r['Fecha']||'';
+    const fecha = r['fecha']||'';
     if(!bySite[site] || fecha >= bySite[site].fecha) bySite[site]={...r, fecha, site};
   });
 
@@ -508,7 +517,8 @@ function processSheetData(){
   redEl.innerHTML = redItems.length
     ? redItems.map(r=>{
         const rest=getAllRests().find(x=>String(x.site)===String(r.site))||{};
-        const pct=(getAusentismo(r)*100).toFixed(0)+'%';
+        const ausVal=getAusentismo(r);
+        const pct=ausVal!==null?(ausVal*100).toFixed(0)+'%':'—';
         return `<div class="alert-item" onclick="openModalBySite('${r.site}')">
           <div class="alert-icon" style="color:var(--danger)">🔴</div>
           <div class="alert-text">
@@ -521,7 +531,8 @@ function processSheetData(){
   const ambEl=document.getElementById('alerts-amber');
   ambEl.innerHTML = amberItems.slice(0,8).map(r=>{
     const rest=getAllRests().find(x=>String(x.site)===String(r.site))||{};
-    const pct=(getAusentismo(r)*100).toFixed(0)+'%';
+    const ausVal2=getAusentismo(r);
+    const pct=ausVal2!==null?(ausVal2*100).toFixed(0)+'%':'—';
     return `<div class="alert-item" style="background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.2);" onclick="openModalBySite('${r.site}')">
       <div class="alert-icon" style="color:var(--amber)">🟡</div>
       <div class="alert-text">
@@ -536,15 +547,15 @@ function processSheetData(){
 }
 
 function getSheetAus(site){
-  const rows = sheetData.filter(r=>String(r['Numero de site (restaurante)']||r['Site']||'').trim()===String(site));
+  const rows = sheetData.filter(r=>String(r['site']||'').trim()===String(site));
   if(!rows.length) return null;
   rows.sort((a,b)=>(b['Fecha del reporte']||'').localeCompare(a['Fecha del reporte']||''));
   return getAusentismo(rows[0]);
 }
 
 function getSheetPts(site){
-  const rows = sheetData.filter(r=>String(r['Numero de site (restaurante)']||r['Site']||'').trim()===String(site));
-  return rows.reduce((s,r)=>s+parseInt(r['Puntos otorgados al equipo hoy']||r['puntos']||0),0);
+  const rows = sheetData.filter(r=>String(r['site']||'').trim()===String(site));
+  return rows.reduce((s,r)=>s+parseInt(r['puntos']||0),0);
 }
 
 function getSem(site){
@@ -737,7 +748,7 @@ function openModal(r){
   document.getElementById('m-gops').textContent=r.gerente_ops||'—';
   document.getElementById('m-pc').textContent=r.consultor_pc||'—';
   // History from sheet
-  const histRows=sheetData.filter(row=>String(row['Numero de site (restaurante)']||row['Site']||'').trim()===String(r.site)).sort((a,b)=>(b['Fecha del reporte']||'').localeCompare(a['Fecha del reporte']||'')).slice(0,3);
+  const histRows=sheetData.filter(row=>String(row['site']||'').trim()===String(r.site)).sort((a,b)=>(b['fecha']||'').localeCompare(a['fecha']||'')).slice(0,3);
   const histEl=document.getElementById('m-history');
   if(histRows.length){
     histEl.innerHTML=histRows.map(h=>{
@@ -745,7 +756,7 @@ function openModal(r){
       const est=getEstado(pct);
       const pctTxt=pct!==null?(pct*100).toFixed(0)+'%':'—';
       const pts=parseInt(h['Puntos otorgados al equipo hoy']||h['puntos']||0);
-      return `<div class="hist-row"><span class="hist-date">${h['Fecha del reporte']||h['Fecha']||'—'}</span><div class="hist-dot ${est}"></div><div>${pctTxt} ausentismo · +${pts} pts</div></div>`;
+      return `<div class="hist-row"><span class="hist-date">${h['fecha']||'—'}</span><div class="hist-dot ${est}"></div><div>${pctTxt} ausentismo · +${pts} pts</div></div>`;
     }).join('');
   } else {
     histEl.innerHTML='<div style="font-size:11px;color:var(--muted);padding:6px 0;">Sin reportes aún en el Sheet</div>';
