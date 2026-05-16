@@ -423,7 +423,18 @@ function setSync(live, txt){
 async function loadSheetData(){
   try{
     setSync(false,'Conectando...');
-    const rows = await fetchSheet(SHEET_RESP+'!A:I');
+    // Try both possible sheet names (with/without accent)
+    let rows = [];
+    const sheetNames = ['Respuestas', 'Sheet1', 'Hoja1', 'RESPUESTAS'];
+    let connected = false;
+    for(const name of sheetNames){
+      try{
+        rows = await fetchSheet(name+'!A:I');
+        connected = true;
+        break;
+      }catch(e2){ continue; }
+    }
+    if(!connected) throw new Error('No se encontró la hoja de respuestas. Verifica que el Sheet sea público y que tenga una hoja llamada "Respuestas".');
     if(rows.length < 2){ sheetData=[]; sheetLoaded=true; setSync(true,'Sin datos aún'); processSheetData(); return; }
     const headers = rows[0];
     sheetData = rows.slice(1).map(r=>{
@@ -444,12 +455,14 @@ async function loadSheetData(){
     setSync(true,'En vivo · '+ sheetData.length+' registros');
     processSheetData();
   } catch(e){
-    setSync(false,'Error de conexión');
+    console.error('Sheet error:', e);
+    setSync(false,'Error: '+e.message.slice(0,40));
     document.getElementById('kpi-loading').style.display='none';
     document.getElementById('kpi-error').style.display='block';
+    document.getElementById('kpi-error').textContent = 'Error: '+e.message.slice(0,120)+' — Verifica que el Sheet sea público.';
     document.getElementById('alerts-loading').style.display='none';
     document.getElementById('alerts-content').style.display='block';
-    document.getElementById('alerts-red').innerHTML='<div style="font-size:12px;color:var(--muted);padding:8px 0;">No se pudo conectar al Sheet. Verifica que sea público de lectura.</div>';
+    document.getElementById('alerts-red').innerHTML='<div style="font-size:11px;color:var(--muted);padding:8px 0;">'+e.message+'</div>';
   }
 }
 
