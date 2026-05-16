@@ -423,27 +423,9 @@ function setSync(live, txt){
 async function loadSheetData(){
   try{
     setSync(false,'Conectando...');
-    // Use gid=446833180 (Respuestas de formulario 1) - bypasses name encoding
-    let rows = [];
-    let connected = false;
-    try {
-      rows = await fetchSheetByGid(446833180, 'A:I');
-      connected = true;
-    } catch(e1) {
-      console.log('GID fetch failed, trying name:', e1.message);
-      // Fallback to name-based
-      try {
-        rows = await fetchSheet('Respuestas de formulario 1!A:I');
-        connected = true;
-      } catch(e2) {
-        try {
-          rows = await fetchSheet('Respuestas!A:I');
-          connected = true;
-        } catch(e3) {
-          throw new Error('No se pudo conectar: '+e1.message);
-        }
-      }
-    }
+    // Use public CSV export with gid=446833180 (Respuestas de formulario 1)
+    // No API key needed, no CORS issues, works from any domain
+    const rows = await fetchSheetCSV(446833180);
     if(rows.length < 2){ sheetData=[]; sheetLoaded=true; setSync(true,'Sin datos aún'); processSheetData(); return; }
     const headers = rows[0];
     sheetData = rows.slice(1).map(r=>{
