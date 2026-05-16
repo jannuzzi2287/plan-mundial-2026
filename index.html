@@ -197,7 +197,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
   <div class="pilar-card"><div class="pilar-tag" style="background:#fef9c3;color:#854d0e;">🗓 Anticipación</div><div class="pilar-desc">Mapeo de fechas críticas y perfiles de riesgo antes del torneo.</div></div>
   <div class="pilar-card"><div class="pilar-tag" style="background:#fce7f3;color:#9d174d;">🎯 Incentivos</div><div class="pilar-desc">Sistema de puntos canjeables en recompensas para el perfil joven.</div></div>
   <div class="pilar-card"><div class="pilar-tag" style="background:#dcfce7;color:#166534;">⚽ Integración</div><div class="pilar-desc">Hacer del Mundial un evento McDonald's: quinielas y playeras alusivas.</div></div>
-  <div class="pilar-card"><div class="pilar-tag" style="background:#dbeafe;color:#1e40af;">⏱ Flexibilidad</div><div class="pilar-desc">Turnos estratégicos para que trabajar y ver el juego no sean opuestos.</div></div>
+  <div class="pilar-card"><div class="pilar-tag" style="background:#dbeafe;color:#1e40af;">⏱ Flexibilidad</div><div class="pilar-desc">Horarios estratégicos para que trabajar y ver el juego no sean opuestos.</div></div>
 </div>
 
 <!-- RANKING -->
@@ -319,7 +319,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
         </div>
       </div>
       <div class="form-row form-row-2">
-        <div><label class="form-label">Turnos</label>
+        <div><label class="form-label">Empleados programados</label>
           <div class="num-wrap"><button class="num-btn minus" onclick="changeNum('f-turnos',-1)">−</button><input class="form-input" id="f-turnos" type="number" value="0" min="0"><button class="num-btn plus" onclick="changeNum('f-turnos',1)">+</button></div>
         </div>
         <div><label class="form-label">Faltas</label>
@@ -334,7 +334,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.94);backdrop-fi
           <div class="num-wrap"><button class="num-btn minus" onclick="changeNum('f-puntos',-10)">−</button><input class="form-input" id="f-puntos" type="number" value="0" min="0" step="10"><button class="num-btn plus" onclick="changeNum('f-puntos',10)">+</button></div>
         </div>
       </div>
-      <div class="form-row"><label class="form-label">Comentarios</label><textarea class="form-textarea" id="f-comentarios" placeholder="Ej. Turnos cubiertos, equipo animado..."></textarea></div>
+      <div class="form-row"><label class="form-label">Comentarios</label><textarea class="form-textarea" id="f-comentarios" placeholder="Ej. Empleados presentes, equipo animado..."></textarea></div>
       <div class="sem-preview" id="sem-preview">
         <div class="sem-dot" id="prev-dot"></div>
         <div><div style="font-size:12px;font-weight:600;" id="prev-estado"></div><div style="font-size:10px;color:var(--muted);" id="prev-pct"></div></div>
@@ -461,11 +461,11 @@ async function loadSheetData(){
       // Aliases — mapped to exact Google Form column names
       obj['site']    = obj['Site de Restaurante']||obj['No. Restaurante']||obj['Numero de site (restaurante)']||obj['Site']||'';
       obj['fecha']   = obj['Fecha']||obj['Fecha del reporte']||'';
-      // Turnos: column name is long, match by prefix
-      const turnosKey = Object.keys(obj).find(k=>k.startsWith('Turnos programados'));
-      obj['turnos']  = (turnosKey?obj[turnosKey]:null)||obj['Turnos programados']||'0';
+      // Empleados: column name is long, match by prefix
+      const turnosKey = Object.keys(obj).find(k=>k.toLowerCase().startsWith('turnos')||k.toLowerCase().startsWith('empleados'));
+      obj['turnos']  = (turnosKey?obj[turnosKey]:'')||'0';
       obj['faltas']  = obj['Colaboradores que faltaron (número)']||obj['Colaboradores que faltaron']||'0';
-      obj['quiniela']= obj['Colaboradores en quiniela (número)']||obj['Participaron en quiniela']||'0';
+      obj['quiniela']= obj['Colaboradores en quinela (número)']||obj['Colaboradores en quiniela (número)']||obj['Participaron en quiniela']||'0';
       obj['puntos']  = obj['Puntos otorgados al equipo hoy (número)']||obj['Puntos otorgados (equipo)']||obj['Puntos otorgados al equipo hoy']||'0';
       obj['partido'] = obj['¿Hubo partido hoy?']||obj['¿Partido hoy?']||'';
       obj['comentarios'] = obj['Comentarios/incidentes que reportar']||obj['Comentarios / incidentes']||'';
@@ -487,7 +487,7 @@ async function loadSheetData(){
 }
 
 function getAusentismo(row){
-  const t=parseInt(row['turnos']||row['Turnos programados']||0);
+  const t=parseInt(row['turnos']||row['empleados']||row['Empleados programados']||0);
   const f=parseInt(row['faltas']||row['Colaboradores que faltaron']||0);
   if(!t) return null;
   return f/t;
@@ -829,7 +829,7 @@ function updatePreview(){
   if(!t){prev.style.display='none';return;}
   const pct=Math.round((f/t)*100);
   prev.style.display='flex';
-  document.getElementById('prev-pct').textContent=`Ausentismo: ${pct}% (${f} de ${t})`;
+  document.getElementById('prev-pct').textContent=`Ausentismo: ${pct}% (${f} de ${t} empleados)`;
   const dot=document.getElementById('prev-dot'),est=document.getElementById('prev-estado');
   if(pct<10){dot.className='sem-dot green';est.textContent='🟢 Verde — sin acción';est.style.color='#22c55e';}
   else if(pct<=20){dot.className='sem-dot amber';est.textContent='🟡 Amarillo — alerta gerente';est.style.color='#f59e0b';}
@@ -845,7 +845,7 @@ async function submitForm(){
   const partido=document.querySelector('#tg-partido .selected');
   if(!site){alert('Ingresa el site');return;}
   if(!partido){alert('Indica si hubo partido');return;}
-  if(!turnos){alert('Ingresa los turnos');return;}
+  if(!turnos){alert('Ingresa el número de empleados programados');return;}
 
   const btn=document.getElementById('btn-enviar');
   btn.disabled=true;
