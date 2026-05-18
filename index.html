@@ -474,7 +474,14 @@ async function loadSheetData(){
       const obj={};
       headers.forEach((h,i)=>obj[h.trim()]=r[i]||'');
       // Aliases — mapped to exact Google Form column names
-      obj['site']    = obj['Site de Restaurante']||obj['No. Restaurante']||obj['Numero de site (restaurante)']||obj['Site']||'';
+      // Site column has long name with examples in parentheses
+      const siteKey = Object.keys(obj).find(k=>k.toLowerCase().startsWith('site de restaurante'));
+      obj['site'] = (siteKey ? obj[siteKey] : '') ||
+                    obj['Site de Restaurante']||obj['No. Restaurante']||
+                    obj['Numero de site (restaurante)']||obj['Site']||'';
+      // Normalize site: remove leading zeros for matching, keep original too
+      obj['siteRaw'] = obj['site'];
+      obj['site'] = String(parseInt(obj['site'])||0) || obj['site'];
       obj['fecha']   = obj['Fecha']||obj['Fecha del reporte']||'';
       // Empleados: column name is long, match by prefix
       const empKey = Object.keys(obj).find(k=>k.toLowerCase().startsWith('empleados programados')||k.toLowerCase().startsWith('turnos'));
@@ -529,8 +536,8 @@ function processSheetData(){
   // Latest row per site
   const bySite={};
   sheetData.forEach(r=>{
-    const site = String(r['site']||'').trim();
-    if(!site) return;
+    const site = normSite(r['site']||'');
+    if(!site||site==='0') return;
     const fecha = r['fecha']||'';
     if(!bySite[site] || fecha >= bySite[site].fecha) bySite[site]={...r, fecha, site};
   });
@@ -602,15 +609,18 @@ function processSheetData(){
   renderRanking();
 }
 
+function normSite(s){ return String(parseInt(s)||0)||String(s).trim(); }
 function getSheetAus(site){
-  const rows = sheetData.filter(r=>String(r['site']||'').trim()===String(site));
+  const ns = normSite(site);
+  const rows = sheetData.filter(r=>normSite(r['site']||'')===ns||String(r['siteRaw']||'').trim()===String(site).trim());
   if(!rows.length) return null;
   rows.sort((a,b)=>(b['Fecha del reporte']||'').localeCompare(a['Fecha del reporte']||''));
   return getAusentismo(rows[0]);
 }
 
 function getSheetPts(site){
-  const rows = sheetData.filter(r=>String(r['site']||'').trim()===String(site));
+  const ns = normSite(site);
+  const rows = sheetData.filter(r=>normSite(r['site']||'')===ns||String(r['siteRaw']||'').trim()===String(site).trim());
   return rows.reduce((s,r)=>s+parseInt(r['puntos']||0),0);
 }
 
