@@ -609,7 +609,14 @@ function processSheetData(){
   renderRanking();
 }
 
-function normSite(s){ return String(parseInt(s)||0)||String(s).trim(); }
+function normSite(s){
+  if(!s) return '0';
+  const str = String(s).trim();
+  // Handle "19 TULUM CANCUN" or "Site 19 · TULUM" format — extract first number
+  const m = str.match(/^(\d+)/);
+  if(m) return String(parseInt(m[1]));
+  return str;
+}
 function getSheetAus(site){
   const ns = normSite(site);
   const rows = sheetData.filter(r=>normSite(r['site']||'')===ns||String(r['siteRaw']||'').trim()===String(site).trim());
